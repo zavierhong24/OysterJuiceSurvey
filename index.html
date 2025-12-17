@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>蚝汁消费与使用偏好调研</title>
-    <!-- 引入 Bmob SDK -->
-    <script src="https://unpkg.com/bmob-js-sdk-v4/dist/Bmob-4.0.0.min.js"></script>
-    <!-- 引入排序库 -->
+    <!-- 🔴 注意：我删除了 Bmob SDK 的引用，改用更稳定的原生 Fetch -->
+    
+    <!-- 引入排序库 (这个很小，通常不会被拦截，保留即可) -->
     <script src="https://cdn.bootcdn.net/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
     <style>
         /* ================= 样式区 (保持不变) ================= */
@@ -107,7 +107,7 @@
 </div>
 
 <script>
-    // 基础交互函数
+    // ================== 基础交互函数 (保持不变) ==================
     function stopProp(e) { if(e && e.stopPropagation) e.stopPropagation(); else window.event.cancelBubble = true; }
     function selectSingle(qId, btn) {
         var group = btn.parentNode; var opts = group.querySelectorAll('.btn-option');
@@ -142,7 +142,6 @@
         if (val !== '没听说过') { card.classList.remove('hidden'); } 
         else { card.classList.add('hidden'); var opts = card.querySelectorAll('.selected'); for(var i=0; i<opts.length; i++) opts[i].classList.remove('selected'); }
     }
-
     // 品牌游戏
     var pickedBrands = [null, null, null];
     function addBrand(btn, name) {
@@ -162,19 +161,10 @@
             else { el.innerText = ["第一","第二","第三"][i]; el.classList.remove('filled'); }
         }
     }
-
     // 排序逻辑
     function moveUp(btn) { stopProp(window.event); var item = btn.parentNode.parentNode; var prev = item.previousElementSibling; if(prev) { item.parentNode.insertBefore(item, prev); updateSortNum(); } }
     function moveDown(btn) { stopProp(window.event); var item = btn.parentNode.parentNode; var next = item.nextElementSibling; if(next) { item.parentNode.insertBefore(next, item); updateSortNum(); } }
     function updateSortNum() { var items = document.querySelectorAll('.sort-num'); for(var i=0; i<items.length; i++) items[i].innerText = (i+1); }
-
-    // 初始化 Bmob (关键修改：SDK + Secret Key + Safe Code)
-    try {
-        Bmob.initialize("70f9577e95b2858b", "1234567890123456"); 
-        console.log("Bmob init ok");
-    } catch(e) {
-        console.error("Bmob fail", e);
-    }
     
     // Sortable
     try {
@@ -191,6 +181,13 @@
             if(inp && inp.value) v += ":" + inp.value; arr.push(v);
         } return arr;
     }
+
+    // ================== 🔴 核心修改区域：使用 Fetch 提交 ==================
+    // 这是你截图里的真实 Key，我已经填好了，不要改
+    const BMOB_APP_ID = "56a52f384c54bf8178c1dfc4aaf314eb"; 
+    const BMOB_REST_KEY = "13fe0ca6cd82988c13b3a9d052a11019"; 
+    // 表名（保持你现在的表名 Test）
+    const TABLE_NAME = "Test";
 
     function submitData() {
         var btn = document.getElementById('btnSubmit');
@@ -218,36 +215,57 @@
         if(!q9) { alert("请选择新型蚝油(Q9)"); return; }
         if(!q10) { alert("请填写认知(Q10)"); return; }
 
-        btn.innerText = "提交中..."; btn.disabled = true;
+        btn.innerText = "提交中..."; 
+        btn.disabled = true;
 
-        // 🔴 关键点：这里必须用 Test 表，因为这是我们在后台唯一新建且名字绝对没问题的表
-        var query = Bmob.Query('Test');
-        query.set("q1_age", q1);
-        query.set("q2_role", q2);
-        query.set("q3_coastal", q3);
-        query.set("q4_freq", q4);
-        query.set("q4_reason", q4_2);
-        query.set("q5_recall", q5);
-        query.set("q6_recent", q6);
-        query.set("q7_why", q7);
-        query.set("q8_rank", q8.join('>'));
-        query.set("q9_pref", q9);
-        query.set("q10_aware", q10);
-        query.set("q11_opinion", q11);
-        query.set("q12_price", q12);
-        query.set("q13_trend", q13);
-        query.set("q14_channel", q14);
+        // 构建数据对象
+        const payload = {
+            "q1_age": q1,
+            "q2_role": q2,
+            "q3_coastal": q3, // 数组
+            "q4_freq": q4,
+            "q4_reason": q4_2, // 数组
+            "q5_recall": q5,
+            "q6_recent": q6,
+            "q7_why": q7, // 数组
+            "q8_rank": q8.join('>'),
+            "q9_pref": q9,
+            "q10_aware": q10,
+            "q11_opinion": q11, // 数组
+            "q12_price": q12,
+            "q13_trend": q13, // 数组
+            "q14_channel": q14 // 数组
+        };
 
-        query.save().then(function(res){
-            alert("✅ 提交成功！");
+        // 使用 Fetch 发送请求 (寄明信片)
+        fetch(`https://api.bmobcloud.com/1/classes/${TABLE_NAME}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Bmob-Application-Id': BMOB_APP_ID,
+                'X-Bmob-REST-API-Key': BMOB_REST_KEY
+            },
+            body: JSON.stringify(payload)
+        })
+        .then(function(response) {
+            if (response.ok) {
+                return response.json();
+            } else {
+                return response.json().then(function(err) { throw err; });
+            }
+        })
+        .then(function(data) {
+            alert("✅ 提交成功！感谢您的参与。");
             btn.innerText = "已完成";
-        }).catch(function(err){
-            var msg = JSON.stringify(err);
-            if(err.code === 404) msg = "找不到表 Test (请确认后台已新建 Test 表)";
-            if(err.code === 401) msg = "安全码验证失败 (请检查后台设置)";
-            alert("❌ 提交失败: " + msg);
-            console.log(err);
-            btn.disabled = false; btn.innerText = "重试";
+        })
+        .catch(function(error) {
+            console.error("提交失败:", error);
+            // 友好的错误提示
+            var msg = "网络连接失败";
+            if (error && error.error) msg = error.error;
+            alert("❌ 提交失败: " + msg + "\n请把此截图发给管理员");
+            btn.disabled = false;
+            btn.innerText = "重试";
         });
     }
 </script>
