@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>蚝汁消费与使用偏好调研</title>
-    <!-- 🔴 注意：我删除了 Bmob SDK 的引用，改用更稳定的原生 Fetch -->
-    
-    <!-- 引入排序库 (这个很小，通常不会被拦截，保留即可) -->
+    <!-- 引入排序库 -->
     <script src="https://cdn.bootcdn.net/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
     <style>
         /* ================= 样式区 (保持不变) ================= */
@@ -182,12 +180,12 @@
         } return arr;
     }
 
-    // ================== 🔴 核心修改区域：使用 Fetch 提交 ==================
-    // 这是你截图里的真实 Key，我已经填好了，不要改
+    // ================== 🔴 核心修改区域：使用新表 HaoYouData ==================
+    // 这是你截图里的真实 Key
     const BMOB_APP_ID = "56a52f384c54bf8178c1dfc4aaf314eb"; 
     const BMOB_REST_KEY = "13fe0ca6cd82988c13b3a9d052a11019"; 
-    // 表名（保持你现在的表名 Test）
-    const TABLE_NAME = "Test";
+    // 🔴 重点：这里换成了新创建的 HaoYouData 表
+    const TABLE_NAME = "HaoYouData";
 
     function submitData() {
         var btn = document.getElementById('btnSubmit');
@@ -222,19 +220,19 @@
         const payload = {
             "q1_age": q1,
             "q2_role": q2,
-            "q3_coastal": q3, // 数组
+            "q3_coastal": q3, 
             "q4_freq": q4,
-            "q4_reason": q4_2, // 数组
+            "q4_reason": q4_2,
             "q5_recall": q5,
             "q6_recent": q6,
-            "q7_why": q7, // 数组
+            "q7_why": q7,
             "q8_rank": q8.join('>'),
             "q9_pref": q9,
             "q10_aware": q10,
-            "q11_opinion": q11, // 数组
+            "q11_opinion": q11,
             "q12_price": q12,
-            "q13_trend": q13, // 数组
-            "q14_channel": q14 // 数组
+            "q13_trend": q13,
+            "q14_channel": q14
         };
 
         // 使用 Fetch 发送请求 (寄明信片)
@@ -260,7 +258,6 @@
         })
         .catch(function(error) {
             console.error("提交失败:", error);
-            // 友好的错误提示
             var msg = "网络连接失败";
             if (error && error.error) msg = error.error;
             alert("❌ 提交失败: " + msg + "\n请把此截图发给管理员");
