@@ -18,7 +18,7 @@
             background-color: var(--bg);
             margin: 0; padding: 0;
             color: var(--text);
-            padding-bottom: 100px;
+            padding-bottom: 120px; /* 底部留白增加 */
             -webkit-tap-highlight-color: transparent;
         }
 
@@ -36,7 +36,7 @@
 
         .container { max-width: 600px; margin: -30px auto 0; padding: 0 15px; position: relative; z-index: 2; }
 
-        /* 问题卡片 */
+        /* 卡片 */
         .card {
             background: var(--card);
             border-radius: 12px;
@@ -55,7 +55,7 @@
         }
         .q-note { font-weight: normal; font-size: 12px; color: #999; }
 
-        /* 选项按钮 */
+        /* 按钮选项 */
         .btn-group { display: flex; flex-direction: column; gap: 8px; }
         .btn-option {
             padding: 12px 15px;
@@ -79,7 +79,7 @@
             content: '✔'; position: absolute; right: 15px; top: 50%; transform: translateY(-50%);
         }
 
-        /* 品牌游戏区样式 */
+        /* 品牌游戏区 */
         .brand-slots { display: flex; gap: 8px; margin-bottom: 12px; }
         .brand-slot {
             flex: 1; height: 36px; border: 2px dashed #CCC;
@@ -98,19 +98,36 @@
         }
         .brand-chip.disabled { background: #EEE; color: #BBB; pointer-events: none; }
 
-        /* 拖拽排序样式 */
+        /* --- 优化后的排序样式 --- */
         .sort-list { list-style: none; padding: 0; margin: 0; }
         .sort-item {
             background: white; border: 1px solid #EEE;
-            padding: 12px; margin-bottom: 8px;
+            padding: 10px; margin-bottom: 8px;
             border-radius: 8px; display: flex; align-items: center;
             justify-content: space-between;
+            transition: background 0.2s;
         }
-        .sort-handle { font-size: 20px; color: #CCC; padding: 0 10px; cursor: grab; }
+        /* 序号 */
         .sort-num {
-            background: #EEE; width: 22px; height: 22px; border-radius: 50%;
-            text-align: center; line-height: 22px; font-size: 12px; 
-            margin-right: 10px; color: #666; font-weight: bold;
+            background: #F0F0F0; width: 24px; height: 24px; border-radius: 50%;
+            text-align: center; line-height: 24px; font-size: 12px; 
+            margin-right: 10px; color: #666; font-weight: bold; flex-shrink: 0;
+        }
+        /* 文本 */
+        .sort-text { flex-grow: 1; font-size: 14px; padding-right: 5px; }
+        /* 操作区 */
+        .sort-actions { display: flex; align-items: center; gap: 5px; }
+        /* 移动按钮 */
+        .move-btn {
+            width: 32px; height: 32px; border: 1px solid #EEE; background: #FFF;
+            border-radius: 6px; color: #666; font-size: 16px; display: flex;
+            align-items: center; justify-content: center; cursor: pointer;
+        }
+        .move-btn:active { background: #F5F5F5; }
+        /* 拖拽把手 */
+        .sort-handle { 
+            font-size: 22px; color: #CCC; padding: 5px 0 5px 10px; cursor: grab; 
+            touch-action: none; /* 关键：防止拖拽时页面滚动 */
         }
 
         /* 提交按钮 */
@@ -126,7 +143,6 @@
         .hidden { display: none !important; }
         .section-title { font-size: 13px; color: #999; text-align: center; margin: 25px 0 15px; font-weight: bold; letter-spacing: 1px; }
         
-        /* 输入框辅助 */
         input[type="text"].inline-input { 
             border: none; border-bottom: 1px solid #ccc; 
             background: transparent; outline: none; 
@@ -138,7 +154,7 @@
 
 <div class="header">
     <h1>🥘 蚝汁/蚝油消费与使用调研</h1>
-    <p>点选与拖拽即可完成，感谢您的支持</p>
+    <p>简单点选，2分钟即可完成</p>
 </div>
 
 <div class="container">
@@ -214,7 +230,7 @@
         <!-- ================= 第2部分 ================= -->
         <div class="section-title">02 / 品牌认知与购买行为</div>
 
-        <!-- Q5 品牌印象 (游戏化) -->
+        <!-- Q5 品牌印象 -->
         <div class="card">
             <div class="q-title"><span class="q-tag">Q5</span>提到蚝油，您最先想到的三个品牌是？</div>
             <div class="brand-slots">
@@ -272,19 +288,88 @@
             </div>
         </div>
 
-        <!-- Q8 排序 -->
+        <!-- Q8 排序 (优化版：拖拽 + 按钮双重操作) -->
         <div class="card">
-            <div class="q-title"><span class="q-tag">Q8</span>购买时最关注哪些因素？<span class="q-note" style="color:var(--primary);">（按住右侧 ☰ 拖拽排序）</span></div>
-            <p style="font-size:12px; color:#999; margin-bottom:10px;">👇 将最重要的因素拖到最上面：</p>
+            <div class="q-title"><span class="q-tag">Q8</span>购买时最关注哪些因素？</div>
+            <div style="background:#F0F8FF; padding:8px; border-radius:6px; margin-bottom:10px; font-size:12px; color:#555;">
+                👇 <strong>两种调整方式：</strong><br>
+                1. 点击 <strong>↑ ↓ 箭头</strong> 调整顺序（推荐）<br>
+                2. 或按住右侧 <strong>☰ 图标</strong> 上下拖动
+            </div>
+            
             <ul class="sort-list" id="sortList">
-                <li class="sort-item" data-id="口味"><div style="display:flex;align-items:center"><div class="sort-num">1</div>口味与鲜度</div><div class="sort-handle">☰</div></li>
-                <li class="sort-item" data-id="蚝汁含量"><div style="display:flex;align-items:center"><div class="sort-num">2</div>蚝汁含量高低</div><div class="sort-handle">☰</div></li>
-                <li class="sort-item" data-id="零添加"><div style="display:flex;align-items:center"><div class="sort-num">3</div>配料表是否清洁(如零添加)</div><div class="sort-handle">☰</div></li>
-                <li class="sort-item" data-id="价格"><div style="display:flex;align-items:center"><div class="sort-num">4</div>价格</div><div class="sort-handle">☰</div></li>
-                <li class="sort-item" data-id="品牌"><div style="display:flex;align-items:center"><div class="sort-num">5</div>品牌</div><div class="sort-handle">☰</div></li>
-                <li class="sort-item" data-id="包装"><div style="display:flex;align-items:center"><div class="sort-num">6</div>包装便利性(如挤挤装)</div><div class="sort-handle">☰</div></li>
-                <li class="sort-item" data-id="促销"><div style="display:flex;align-items:center"><div class="sort-num">7</div>促销力度</div><div class="sort-handle">☰</div></li>
-                <li class="sort-item" data-id="附加值"><div style="display:flex;align-items:center"><div class="sort-num">8</div>其他附加值(如非遗/有机标志)</div><div class="sort-handle">☰</div></li>
+                <li class="sort-item" data-id="口味">
+                    <div class="sort-num">1</div>
+                    <div class="sort-text">口味与鲜度</div>
+                    <div class="sort-actions">
+                        <div class="move-btn" onclick="moveUp(this)">↑</div>
+                        <div class="move-btn" onclick="moveDown(this)">↓</div>
+                        <div class="sort-handle">☰</div>
+                    </div>
+                </li>
+                <li class="sort-item" data-id="蚝汁含量">
+                    <div class="sort-num">2</div>
+                    <div class="sort-text">蚝汁含量高低</div>
+                    <div class="sort-actions">
+                        <div class="move-btn" onclick="moveUp(this)">↑</div>
+                        <div class="move-btn" onclick="moveDown(this)">↓</div>
+                        <div class="sort-handle">☰</div>
+                    </div>
+                </li>
+                <li class="sort-item" data-id="零添加">
+                    <div class="sort-num">3</div>
+                    <div class="sort-text">配料表清洁(零添加)</div>
+                    <div class="sort-actions">
+                        <div class="move-btn" onclick="moveUp(this)">↑</div>
+                        <div class="move-btn" onclick="moveDown(this)">↓</div>
+                        <div class="sort-handle">☰</div>
+                    </div>
+                </li>
+                <li class="sort-item" data-id="价格">
+                    <div class="sort-num">4</div>
+                    <div class="sort-text">价格</div>
+                    <div class="sort-actions">
+                        <div class="move-btn" onclick="moveUp(this)">↑</div>
+                        <div class="move-btn" onclick="moveDown(this)">↓</div>
+                        <div class="sort-handle">☰</div>
+                    </div>
+                </li>
+                <li class="sort-item" data-id="品牌">
+                    <div class="sort-num">5</div>
+                    <div class="sort-text">品牌</div>
+                    <div class="sort-actions">
+                        <div class="move-btn" onclick="moveUp(this)">↑</div>
+                        <div class="move-btn" onclick="moveDown(this)">↓</div>
+                        <div class="sort-handle">☰</div>
+                    </div>
+                </li>
+                <li class="sort-item" data-id="包装">
+                    <div class="sort-num">6</div>
+                    <div class="sort-text">包装便利性(挤挤装)</div>
+                    <div class="sort-actions">
+                        <div class="move-btn" onclick="moveUp(this)">↑</div>
+                        <div class="move-btn" onclick="moveDown(this)">↓</div>
+                        <div class="sort-handle">☰</div>
+                    </div>
+                </li>
+                <li class="sort-item" data-id="促销">
+                    <div class="sort-num">7</div>
+                    <div class="sort-text">促销力度</div>
+                    <div class="sort-actions">
+                        <div class="move-btn" onclick="moveUp(this)">↑</div>
+                        <div class="move-btn" onclick="moveDown(this)">↓</div>
+                        <div class="sort-handle">☰</div>
+                    </div>
+                </li>
+                <li class="sort-item" data-id="附加值">
+                    <div class="sort-num">8</div>
+                    <div class="sort-text">附加值(非遗/有机等)</div>
+                    <div class="sort-actions">
+                        <div class="move-btn" onclick="moveUp(this)">↑</div>
+                        <div class="move-btn" onclick="moveDown(this)">↓</div>
+                        <div class="sort-handle">☰</div>
+                    </div>
+                </li>
             </ul>
         </div>
 
@@ -392,7 +477,7 @@
     </form>
 </div>
 
-<!-- 脚本区：国内 CDN，底部加载防白屏 -->
+<!-- 脚本区 -->
 <script src="https://cdn.bootcdn.net/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
 <script src="https://unpkg.com/bmob-js-sdk-v4/dist/Bmob-4.0.0.min.js"></script>
 
@@ -405,7 +490,7 @@
         console.error("Bmob init failed", e);
     }
 
-    // 2. 交互逻辑函数
+    // 2. 通用交互
     function selectSingle(qId, btn) {
         var parent = btn.parentNode;
         var siblings = parent.getElementsByClassName('btn-option');
@@ -428,7 +513,7 @@
         btn.classList.toggle('selected');
     }
 
-    // Q3 互斥逻辑
+    // Q3 互斥
     function selectCoastal(btn) {
         var val = btn.getAttribute('data-val');
         var parent = btn.parentNode;
@@ -440,7 +525,6 @@
             for(var i=0; i<btns.length; i++) {
                 if(btns[i].getAttribute('data-val') === '都不是') btns[i].classList.remove('selected');
             }
-            // 限制最多2个
             var currentSelected = 0;
             for(var i=0; i<btns.length; i++) if(btns[i].classList.contains('selected')) currentSelected++;
             if(!btn.classList.contains('selected') && currentSelected >= 2) {
@@ -450,7 +534,7 @@
         }
     }
 
-    // Q4 -> Q4.2 联动
+    // Q4 联动
     function selectFreq(btn) {
         selectSingle('q4', btn);
         var val = btn.getAttribute('data-val');
@@ -464,10 +548,177 @@
         }
     }
 
-    // Q10 -> Q11 联动
+    // Q10 联动
     function selectQ10(btn) {
         selectSingle('q10', btn);
         var val = btn.getAttribute('data-val');
         var card = document.getElementById('card_q11');
-        // 只要不是"没听说过"，就显示看法题
         if (val !== '没听说过') {
+            card.classList.remove('hidden');
+        } else {
+            card.classList.add('hidden');
+            var btns = card.querySelectorAll('.selected');
+            for(var i=0; i<btns.length; i++) btns[i].classList.remove('selected');
+        }
+    }
+
+    // --- Q5 品牌游戏 ---
+    var pickedBrands = [null, null, null];
+    function addBrand(btn, name) {
+        if(btn.classList.contains('disabled')) return;
+        var idx = pickedBrands.indexOf(null);
+        if(idx === -1) { alert("只能选择3个，点击上方格子可删除"); return; }
+        pickedBrands[idx] = name;
+        renderBrands();
+        if(name === '其他') document.getElementById('q5_manual').classList.remove('hidden');
+    }
+    function removeBrand(idx) {
+        if(pickedBrands[idx] === '其他') {
+            document.getElementById('q5_manual').classList.add('hidden');
+            document.getElementById('q5_manual').value = '';
+        }
+        pickedBrands[idx] = null;
+        renderBrands();
+    }
+    function renderBrands() {
+        for(var i=0; i<3; i++) {
+            var el = document.getElementById('slot_'+i);
+            if(pickedBrands[i]) {
+                el.innerText = pickedBrands[i];
+                el.classList.add('filled');
+                el.innerHTML = pickedBrands[i] + ' <span style="font-size:10px">×</span>';
+            } else {
+                el.innerText = ["第一提及","第二提及","第三提及"][i];
+                el.classList.remove('filled');
+            }
+        }
+    }
+
+    // --- Q8 排序 (新增按钮调整功能) ---
+    var sortList = document.getElementById('sortList');
+    
+    // 按钮上移
+    function moveUp(btn) {
+        // 阻止冒泡，防止触发拖拽或其他
+        event.stopPropagation();
+        var item = btn.closest('.sort-item');
+        var prev = item.previousElementSibling;
+        if(prev) {
+            item.parentNode.insertBefore(item, prev);
+            updateSortNumbers();
+        }
+    }
+    
+    // 按钮下移
+    function moveDown(btn) {
+        event.stopPropagation();
+        var item = btn.closest('.sort-item');
+        var next = item.nextElementSibling;
+        if(next) {
+            item.parentNode.insertBefore(next, item);
+            updateSortNumbers();
+        }
+    }
+
+    // 更新序号函数
+    function updateSortNumbers() {
+        var items = sortList.getElementsByClassName('sort-num');
+        for(var i=0; i<items.length; i++) {
+            items[i].innerText = (i+1);
+        }
+    }
+
+    // 拖拽初始化
+    if(typeof Sortable !== 'undefined') {
+        new Sortable(sortList, {
+            animation: 150, handle: '.sort-handle',
+            onEnd: updateSortNumbers // 拖拽结束也更新序号
+        });
+    }
+
+    // --- 提交 ---
+    function getMultiVals(groupId) {
+        var btns = document.querySelectorAll('#' + groupId + ' .selected');
+        var vals = [];
+        for(var i=0; i<btns.length; i++) {
+            var val = btns[i].getAttribute('data-val');
+            var input = btns[i].querySelector('input');
+            if(input && input.value) val += ":" + input.value;
+            vals.push(val);
+        }
+        return vals;
+    }
+
+    function submitData() {
+        var btn = document.getElementById('btnSubmit');
+
+        // 数据收集
+        var q1 = document.getElementById('input_q1').value;
+        var q2 = document.getElementById('input_q2').value;
+        var q3 = getMultiVals('group_q3');
+        var q4 = document.getElementById('input_q4').value;
+        var q4_2 = getMultiVals('group_q4_2');
+        
+        var q5_arr = pickedBrands.filter(function(v){ return v!=null; });
+        var q5 = q5_arr.join(',');
+        if(pickedBrands.includes('其他')) q5 += "(" + document.getElementById('q5_manual').value + ")";
+
+        var q6 = document.getElementById('input_q6').value;
+        var q6_other = document.getElementById('q6_other').value;
+        if(q6 === '其他' && q6_other) q6 += ":" + q6_other;
+
+        var q7 = getMultiVals('group_q7');
+        
+        // 获取排序结果
+        var q8 = [];
+        var sortItems = document.querySelectorAll('.sort-item');
+        for(var i=0; i<sortItems.length; i++) q8.push(sortItems[i].getAttribute('data-id'));
+        
+        var q9 = document.getElementById('input_q9').value;
+        var q10 = document.getElementById('input_q10').value;
+        var q11 = getMultiVals('group_q11');
+        var q12 = document.getElementById('input_q12').value;
+        var q13 = getMultiVals('group_q13');
+        var q14 = getMultiVals('group_q14');
+
+        // 校验
+        if(!q1 || !q2 || q3.length===0 || !q4) { alert("请填写基础信息(Q1-Q4)"); return; }
+        if(q5_arr.length === 0) { alert("请选择品牌印象(Q5)"); return; }
+        if(!q6) { alert("请选择最近购买品牌(Q6)"); return; }
+        if(!q9) { alert("请选择新型蚝油偏好(Q9)"); return; }
+        if(!q10) { alert("请填写认知情况(Q10)"); return; }
+
+        btn.innerText = "提交中...";
+        btn.disabled = true;
+
+        var query = Bmob.Query('OysterJuiceSurvey');
+        query.set("q1_age", q1);
+        query.set("q2_role", q2);
+        query.set("q3_coastal", q3);
+        query.set("q4_freq", q4);
+        query.set("q4_reason", q4_2);
+        query.set("q5_recall", q5);
+        query.set("q6_recent", q6);
+        query.set("q7_why", q7);
+        query.set("q8_rank", q8.join('>'));
+        query.set("q9_pref", q9);
+        query.set("q10_aware", q10);
+        query.set("q11_opinion", q11);
+        query.set("q12_price", q12);
+        query.set("q13_trend", q13);
+        query.set("q14_channel", q14);
+
+        query.save().then(function(res){
+            alert("✅ 提交成功！感谢您的配合。");
+            btn.innerText = "已完成";
+        }).catch(function(err){
+            alert("❌ 提交失败，请重试");
+            console.log(err);
+            btn.disabled = false;
+            btn.innerText = "重新提交";
+        });
+    }
+</script>
+
+</body>
+</html>
