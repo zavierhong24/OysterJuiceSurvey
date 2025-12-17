@@ -676,10 +676,20 @@
         query.set("q14_channel", q14);
 
         query.save().then(function(res){
-            alert("✅ 提交成功！");
+            alert("✅ 提交成功！数据已保存。");
             btn.innerText = "已完成";
         }).catch(function(err){
-            alert("❌ 提交失败，请重试");
+            // 🔴 这里改动了：把错误详细信息弹出来
+            var errorMsg = "未知错误";
+            if (typeof err === 'object') {
+                errorMsg = JSON.stringify(err);
+                if (err.code === 404) errorMsg = "错误 404：找不到数据表（表名不对）";
+                if (err.code === 401) errorMsg = "错误 401：密钥或安全码不对";
+                if (err.error) errorMsg = err.error;
+            } else {
+                errorMsg = err;
+            }
+            alert("❌ 提交失败！原因：" + errorMsg);
             console.log(err);
             btn.disabled = false;
             btn.innerText = "重试";
@@ -689,3 +699,4 @@
 
 </body>
 </html>
+
