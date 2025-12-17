@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>蚝汁应用与消费偏好调研</title>
+    <!-- 引入 Bmob SDK -->
+    <script src="https://unpkg.com/bmob-js-sdk-v4/dist/Bmob-4.0.0.min.js"></script>
+    <style>
+        :root { --primary-color: #d64040; --bg-color: #f7f8fa; --text-main: #333; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; background-color: var(--bg-color); margin: 0; padding: 0; color: var(--text-main); line-height: 1.6; }
+        .header { background: #fff; padding: 20px; text-align: center; border-bottom: 1px solid #eee; }
+        .header h1 { margin: 0; font-size: 20px; color: var(--primary-color); }
+        .header p { margin: 5px 0 0; font-size: 12px; color: #666; }
+        
+        .container { max-width: 640px; margin: 0 auto; padding: 15px; }
+        
+        .section-title { font-size: 16px; font-weight: bold; margin: 25px 0 15px; padding-left: 10px; border-left: 4px solid var(--primary-color); color: #444; }
+        
+        .question-card { background: #fff; padding: 15px 20px; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.03); }
+        .q-title { font-weight: bold; font-size: 15px; margin-bottom: 10px; display: block; }
+        .q-note { font-size: 12px; color: #999; font-weight: normal; margin-left: 5px; }
+
+        .option-group label { display: flex; align-items: center; padding: 8px 0; cursor: pointer; border-bottom: 1px solid #f9f9f9; }
+        .option-group label:last-child { border-bottom: none; }
+        input[type="radio"], input[type="checkbox"] { margin-right: 10px; transform: scale(1.2); accent-color: var(--primary-color); }
+        
+        input[type="text"], input[type="number"] { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; margin-top: 5px; -webkit-appearance: none; }
+        input.inline-input { width: auto; flex: 1; margin-left: 10px; margin-top: 0; border: none; border-bottom: 1px solid #ddd; border-radius: 0; padding: 5px; background: transparent; }
+        .brand-inputs input { margin-bottom: 8px; }
+
+        /* 排序题样式 */
+        .sort-item { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f5f5f5; }
+        .sort-item span { flex: 1; }
+        .sort-input { width: 60px !important; text-align: center; margin-left: 10px; }
+
+        .btn-submit { display: block; width: 100%; background-color: var(--primary-color); color: #fff; padding: 16px; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 20px; margin-bottom: 40px; box-shadow: 0 4px 12px rgba(214, 64, 64, 0.3); }
+        .btn-submit:active { opacity: 0.9; transform: translateY(1px); }
+        .btn-submit:disabled { background-color: #ccc; cursor: not-allowed; box-shadow: none; }
+
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>蚝汁应用与消费偏好调研</h1>
+    <p>感谢您的参与，预计耗时 2 分钟</p>
+</div>
+
+<div class="container">
+    <form id="surveyForm">
+        
+        <!-- 第一部分 -->
+        <div class="section-title">第一部分：用户画像与消费基础</div>
+        <div class="question-card">
+            <div class="q-title">1. 您的年龄段是？</div>
+            <div class="option-group">
+                <label><input type="radio" name="q1" value="18-25岁"> 18-25岁</label>
+                <label><input type="radio" name="q1" value="26-35岁"> 26-35岁</label>
+                <label><input type="radio" name="q1" value="36-45岁"> 36-45岁</label>
+                <label><input type="radio" name="q1" value="46-55岁"> 46-55岁</label>
+                <label><input type="radio" name="q1" value="56岁及以上"> 56岁及以上</label>
+            </div>
+        </div>
+        <div class="question-card">
+            <div class="q-title">2. 您家中负责购买调味品的人主要是？</div>
+            <div class="option-group">
+                <label><input type="radio" name="q2" value="自己"> 自己</label>
+                <label><input type="radio" name="q2" value="配偶/伴侣"> 配偶/伴侣</label>
+                <label><input type="radio" name="q2" value="父母"> 父母</label>
+                <label><input type="radio" name="q2" value="其他"> 其他</label>
+            </div>
+        </div>
+        <div class="question-card">
+            <div class="q-title">3. 您家中使用蚝油的频率是？</div>
+            <div class="option-group">
+                <label><input type="radio" name="q3" value="几乎每天使用"> 几乎每天使用</label>
+                <label><input type="radio" name="q3" value="每周几次"> 每周几次</label>
+                <label><input type="radio" name="q3" value="每月几次"> 每月几次</label>
+                <label><input type="radio" name="q3" value="很少使用"> 很少使用</label>
+                <label><input type="radio" name="q3" value="从不使用"> 从不使用</label>
+            </div>
+        </div>
+
+        <!-- 第二部分 -->
+        <div class="section-title">第二部分：品牌认知与购买行为</div>
+        <div class="question-card">
+            <div class="q-title">4. 提到蚝油，您最先想到的三个品牌是？</div>
+            <div class="brand-inputs">
+                <input type="text" id="q4_1" placeholder="第一提及品牌">
+                <input type="text" id="q4_2" placeholder="第二提及品牌">
+                <input type="text" id="q4_3" placeholder="第三提及品牌">
+            </div>
+        </div>
+        <div class="question-card">
+            <div class="q-title">5. 您最近一次购买的蚝油品牌是？</div>
+            <div class="option-group">
+                <label><input type="radio" name="q5" value="海天"> 海天</label>
+                <label><input type="radio" name="q5" value="李锦记"> 李锦记</label>
+                <label><input type="radio" name="q5" value="厨邦"> 厨邦</label>
+                <label><input type="radio" name="q5" value="林小生"> 林小生</label>
+                <label><input type="radio" name="q5" value="旧庄蚝油"> 旧庄蚝油</label>
+                <label><input type="radio" name="q5" value="其他"> 其他 <input type="text" id="q5_other" class="inline-input" placeholder="请输入"></label>
+            </div>
+        </div>
+        <div class="question-card">
+            <div class="q-title">6. 您选择该品牌蚝油的主要原因？<span class="q-note">(最多选3项)</span></div>
+            <div class="option-group">
+                <label><input type="checkbox" name="q6" value="品牌信誉好"> 品牌信誉好</label>
+                <label><input type="checkbox" name="q6" value="口味/鲜味好"> 口味/鲜味好</label>
+                <label><input type="checkbox" name="q6" value="配方纯净/零添加"> 配方纯净/零添加</label>
+                <label><input type="checkbox" name="q6" value="价格实惠"> 价格实惠</label>
+                <label><input type="checkbox" name="q6" value="亲友推荐"> 亲友推荐</label>
+                <label><input type="checkbox" name="q6" value="促销活动"> 促销活动</label>
+                <label><input type="checkbox" name="q6" value="包装设计好"> 包装设计好</label>
+                <label><input type="checkbox" name="q6" value="其他"> 其他 <input type="text" id="q6_other" class="inline-input" placeholder="请输入"></label>
+            </div>
+        </div>
+        <div class="question-card">
+            <div class="q-title">7. 您购买蚝油时，最关注哪些因素？<span class="q-note">(请填写数字 1-7 排序，1代表最重要)</span></div>
+            <div class="option-group">
+                <div class="sort-item"><span>口味与鲜度</span> <input type="number" class="sort-input q7-input" data-name="口味与鲜度" min="1" max="7"></div>
+                <div class="sort-item"><span>蚝汁含量高低</span> <input type="number" class="sort-input q7-input" data-name="蚝汁含量" min="1" max="7"></div>
+                <div class="sort-item"><span>配料表清洁(零添加)</span> <input type="number" class="sort-input q7-input" data-name="配料表清洁" min="1" max="7"></div>
+                <div class="sort-item"><span>价格</span> <input type="number" class="sort-input q7-input" data-name="价格" min="1" max="7"></div>
+                <div class="sort-item"><span>品牌</span> <input type="number" class="sort-input q7-input" data-name="品牌" min="1" max="7"></div>
+                <div class="sort-item"><span>包装便利性(挤挤装)</span> <input type="number" class="sort-input q7-input" data-name="包装便利性" min="1" max="7"></div>
+                <div class="sort-item"><span>促销力度</span> <input type="number" class="sort-input q7-input" data-name="促销力度" min="1" max="7"></div>
+            </div>
+        </div>
+
+        <!-- 第三部分 -->
+        <div class="section-title">第三部分：产品使用与偏好测试</div>
+        <div class="question-card">
+            <div class="q-title">8. 是否听说/购买过“高蚝汁含量”或“洁净配方”品牌（如林小生）？</div>
+            <div class="option-group">
+                <label><input type="radio" name="q8" value="是，购买过" onclick="toggleQ9(true)"> 是，购买过</label>
+                <label><input type="radio" name="q8" value="是，听说过但未购买过" onclick="toggleQ9(true)"> 是，听说过但未购买过</label>
+                <label><input type="radio" name="q8" value="没听说过" onclick="toggleQ9(false)"> 没听说过</label>
+            </div>
+        </div>
+        <div class="question-card" id="card_q9">
+            <div class="q-title">9. 您对这类“高蚝汁/洁净配方”蚝油的看法是？<span class="q-note">(可多选)</span></div>
+            <div class="option-group">
+                <label><input type="checkbox" name="q9" value="愿意溢价付费"> 愿意为更高品质和健康溢价付费</label>
+                <label><input type="checkbox" name="q9" value="感兴趣但价格偏高"> 感兴趣，但觉得价格偏高</label>
+                <label><input type="checkbox" name="q9" value="差别不大"> 认为与传统品牌差别不大</label>
+                <label><input type="checkbox" name="q9" value="不信任宣传"> 不信任其宣传概念</label>
+                <label><input type="checkbox" name="q9" value="其他"> 其他 <input type="text" id="q9_other" class="inline-input"></label>
+            </div>
+        </div>
+        <div class="question-card">
+            <div class="q-title">10. 一瓶主流规格(500g)蚝油，您能接受的价格区间？</div>
+            <div class="option-group">
+                <label><input type="radio" name="q10" value="15元以下"> 15元以下</label>
+                <label><input type="radio" name="q10" value="16-25元"> 16-25元</label>
+                <label><input type="radio" name="q10" value="26-35元"> 26-35元</label>
+                <label><input type="radio" name="q10" value="36元以上"> 36元以上</label>
+            </div>
+        </div>
+
+        <!-- 第四部分 -->
+        <div class="section-title">第四部分：未来趋势与信息获取</div>
+        <div class="question-card">
+            <div class="q-title">11. 未来您选择蚝油会更多关注哪些方向？<span class="q-note">(最多3项)</span></div>
+            <div class="option-group">
+                <label><input type="checkbox" name="q11" value="功能性"> 功能性（如零添加、减盐、无麸质）</label>
+                <label><input type="checkbox" name="q11" value="高端化"> 高端化（如更高蚝汁含量、原产地）</label>
+                <label><input type="checkbox" name="q11" value="便捷性"> 便捷性（如挤挤包、小包装）</label>
+                <label><input type="checkbox" name="q11" value="可持续"> 可持续（如环保包装）</label>
+                <label><input type="checkbox" name="q11" value="口味创新"> 口味创新（如辣味、蒜香等）</label>
+            </div>
+        </div>
+        <div class="question-card">
+            <div class="q-title">12. 您通常通过什么渠道了解新调味品？<span class="q-note">(可多选)</span></div>
+            <div class="option-group">
+                <label><input type="checkbox" name="q12" value="电商平台"> 电商平台（京东、天猫等）</label>
+                <label><input type="checkbox" name="q12" value="短视频/直播"> 短视频/直播平台（抖音、快手等）</label>
+                <label><input type="checkbox" name="q12" value="亲友口碑"> 亲友口碑推荐</label>
+                <label><input type="checkbox" name="q12" value="线下商超"> 线下商超陈列</label>
+                <label><input type="checkbox" name="q12" value="博主推荐"> 美食博主/评测推荐</label>
+                <label><input type="checkbox" name="q12" value="其他"> 其他 <input type="text" id="q12_other" class="inline-input"></label>
+            </div>
+        </div>
+
+        <button type="button" class="btn-submit" id="submitBtn" onclick="submitSurvey()">提交问卷</button>
+    </form>
+</div>
+
+<script>
+    // ===============================================
+    // 密钥初始化 (已填入您的真实密钥)
+    // ===============================================
+    Bmob.initialize("70f9577e95b2858b", "1234567890123456"); 
+    // ===============================================
+
+    function toggleQ9(show) {
+        const card = document.getElementById('card_q9');
+        if (show) { card.classList.remove('hidden'); } 
+        else { card.classList.add('hidden'); document.querySelectorAll('input[name="q9"]').forEach(el => el.checked = false); }
+    }
+
+    function getRadioValue(name) {
+        const el = document.querySelector(`input[name="${name}"]:checked`);
+        if(!el) return null;
+        if(el.value.includes("其他") || ["海天","李锦记","是，购买过","是，听说过但未购买过","没听说过"].includes(el.value)) {
+            const otherInput = document.querySelector(`input[name="${name}"]:checked ~ input[type="text"]`);
+            if (otherInput && otherInput.value) return "其他: " + otherInput.value;
+        }
+        return el.value;
+    }
+
+    function getCheckboxValue(name) {
+        const checked = document.querySelectorAll(`input[name="${name}"]:checked`);
+        let values = [];
+        checked.forEach(el => {
+            const otherInput = el.nextElementSibling; 
+            if (el.value === "其他" && otherInput && otherInput.tagName === 'INPUT') {
+                values.push("其他: " + otherInput.value);
+            } else { values.push(el.value); }
+        });
+        return values;
+    }
+
+    function getRankingValue() {
+        let rankings = {};
+        let inputs = document.querySelectorAll('.q7-input');
+        let isValid = true;
+        let filledCount = 0;
+        inputs.forEach(input => {
+            if(input.value) {
+                let rank = parseInt(input.value);
+                if(rank < 1 || rank > 7) isValid = false;
+                rankings[input.getAttribute('data-name')] = rank;
+                filledCount++;
+            }
+        });
+        return { data: rankings, count: filledCount, valid: isValid };
+    }
+
+    function submitSurvey() {
+        const btn = document.getElementById('submitBtn');
+        
+        const q1 = getRadioValue('q1');
+        const q2 = getRadioValue('q2');
+        const q3 = getRadioValue('q3');
+        const q4 = [document.getElementById('q4_1').value, document.getElementById('q4_2').value, document.getElementById('q4_3').value].filter(v => v).join(', ');
+        const q5 = getRadioValue('q5');
+        const q6 = getCheckboxValue('q6');
+        const q7 = getRankingValue();
+        const q8 = getRadioValue('q8');
+        const q9 = getCheckboxValue('q9'); 
+        const q10 = getRadioValue('q10');
+        const q11 = getCheckboxValue('q11');
+        const q12 = getCheckboxValue('q12');
+
+        if (!q1 || !q2 || !q3 || !q4 || !q5 || !q8 || !q10) { alert("请检查是否有未完成的题目（如品牌填写）！"); return; }
+        if (q6.length === 0 || q6.length > 3) { alert("第6题请选择1-3项！"); return; }
+        if (q11.length === 0 || q11.length > 3) { alert("第11题请选择1-3项！"); return; }
+        if (q7.count < 1) { alert("请完成第7题的排序！"); return; }
+
+        btn.disabled = true;
+        btn.innerText = "提交中...";
+
+        // ⚠️ 关键检查：表名必须为 OysterJuiceSurvey
+        const query = Bmob.Query('OysterJuiceSurvey');
+        
+        query.set("q1_age", q1);
+        query.set("q2_shopper", q2);
+        query.set("q3_freq", q3);
+        query.set("q4_brands", q4);
+        query.set("q5_last_brand", q5);
+        query.set("q6_reason", q6);
+        query.set("q7_ranking", JSON.stringify(q7.data)); 
+        query.set("q8_heard", q8);
+        query.set("q9_opinion", q9);
+        query.set("q10_price", q10);
+        query.set("q11_trends", q11);
+        query.set("q12_channels", q12);
+
+        query.save().then(res => {
+            alert("提交成功！感谢您的配合。");
+            btn.innerText = "已提交";
+            location.reload(); 
+        }).catch(err => {
+            console.log(err);
+            alert("提交失败：" + (err.error || JSON.stringify(err)));
+            btn.disabled = false;
+            btn.innerText = "提交问卷";
+        });
+    }
+</script>
+
+</body>
+</html>
