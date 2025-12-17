@@ -59,6 +59,7 @@
             font-size: 12px; padding: 2px 6px; border-radius: 4px;
             margin-right: 6px; font-weight: bold; vertical-align: middle;
         }
+        .q-note { font-weight: normal; font-size: 12px; color: #999; }
 
         /* 选项按钮 */
         .btn-group { display: flex; flex-direction: column; gap: 10px; }
@@ -74,8 +75,6 @@
             user-select: none;
         }
         .btn-option:active { background: #EFEFEF; }
-        
-        /* 选中状态 */
         .btn-option.selected {
             background: var(--primary-bg);
             border-color: var(--primary);
@@ -134,6 +133,8 @@
             box-shadow: 0 6px 20px rgba(217, 68, 54, 0.3);
             cursor: pointer;
         }
+        .submit-btn:disabled { background: #999; box-shadow: none; cursor: not-allowed; }
+
         .hidden { display: none !important; }
         .section-title { font-size: 13px; color: #999; text-align: center; margin: 25px 0 15px; font-weight: bold; letter-spacing: 1px; }
         input.inline-input { border: none; border-bottom: 1px solid #ccc; background: transparent; outline: none; width: 120px; margin-left: 5px; font-size: 14px; }
@@ -179,7 +180,7 @@
 
         <!-- Q3 沿海 -->
         <div class="card">
-            <div class="q-title"><span class="q-tag">Q3</span>是否为沿海地区？<span style="font-size:12px;color:#999">（至多选2项）</span></div>
+            <div class="q-title"><span class="q-tag">Q3</span>是否为沿海地区？<span class="q-note">（至多选2项）</span></div>
             <div class="btn-group" id="group_q3">
                 <div class="btn-option" onclick="selectCoastal(this)" data-val="常住地是">常住地是沿海地区</div>
                 <div class="btn-option" onclick="selectCoastal(this)" data-val="祖籍是">祖籍是沿海地区</div>
@@ -202,7 +203,7 @@
 
         <!-- Q4.2 原因 -->
         <div class="card hidden" id="card_q4_2">
-            <div class="q-title"><span class="q-tag">Q4.2</span>不用蚝油的原因？<span style="font-size:12px;color:#999">（多选）</span></div>
+            <div class="q-title"><span class="q-tag">Q4.2</span>不用蚝油的原因？<span class="q-note">（多选）</span></div>
             <div class="btn-group" id="group_q4_2">
                 <div class="btn-option" onclick="selectMulti(this)" data-val="控盐">需要控钠低盐饮食</div>
                 <div class="btn-option" onclick="selectMulti(this)" data-val="忌口">忌口，不喜欢海腥味</div>
@@ -262,7 +263,7 @@
 
         <!-- Q7 原因 -->
         <div class="card">
-            <div class="q-title"><span class="q-tag">Q7</span>购买原因？<span style="font-size:12px;color:#999">（多选，最多3项）</span></div>
+            <div class="q-title"><span class="q-tag">Q7</span>购买原因？<span class="q-note">（多选，最多3项）</span></div>
             <div class="btn-group" id="group_q7">
                 <div class="btn-option" onclick="selectMultiLimit(this, 3)" data-val="品牌">品牌信誉好</div>
                 <div class="btn-option" onclick="selectMultiLimit(this, 3)" data-val="口味">口味/鲜味好</div>
@@ -390,7 +391,7 @@
 
         <!-- Q11 看法 -->
         <div class="card hidden" id="card_q11">
-            <div class="q-title"><span class="q-tag">Q11</span>您对这类产品的看法？<span style="font-size:12px;color:#999">（多选）</span></div>
+            <div class="q-title"><span class="q-tag">Q11</span>您对这类产品的看法？<span class="q-note">（多选）</span></div>
             <div class="btn-group" id="group_q11">
                 <div class="btn-option" onclick="selectMulti(this)" data-val="愿意付费">愿意为品质/健康付费</div>
                 <div class="btn-option" onclick="selectMulti(this)" data-val="价格偏高">感兴趣，但觉得贵</div>
@@ -417,7 +418,7 @@
 
         <!-- Q13 趋势 -->
         <div class="card">
-            <div class="q-title"><span class="q-tag">Q13</span>未来关注方向？<span style="font-size:12px;color:#999">（最多3项）</span></div>
+            <div class="q-title"><span class="q-tag">Q13</span>未来关注方向？<span class="q-note">（最多3项）</span></div>
             <div class="btn-group" id="group_q13">
                 <div class="btn-option" onclick="selectMultiLimit(this, 3)" data-val="功能性">功能性(减盐/无麸质)</div>
                 <div class="btn-option" onclick="selectMultiLimit(this, 3)" data-val="高端化">高端化(高蚝汁/原产地)</div>
@@ -429,7 +430,7 @@
 
         <!-- Q14 渠道 -->
         <div class="card">
-            <div class="q-title"><span class="q-tag">Q14</span>了解渠道？<span style="font-size:12px;color:#999">（多选）</span></div>
+            <div class="q-title"><span class="q-tag">Q14</span>了解渠道？<span class="q-note">（多选）</span></div>
             <div class="btn-group" id="group_q14">
                 <div class="btn-option" onclick="selectMulti(this)" data-val="电商">电商平台</div>
                 <div class="btn-option" onclick="selectMulti(this)" data-val="短视频">短视频/直播</div>
@@ -447,13 +448,9 @@
     </form>
 </div>
 
-<!-- ================= 脚本区 ================= -->
-<script src="https://cdn.bootcdn.net/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
-<script src="https://unpkg.com/bmob-js-sdk-v4/dist/Bmob-4.0.0.min.js"></script>
-
+<!-- 脚本区：移除了 SDK 引用，使用纯原生 fetch -->
 <script>
-    // 1. 定义交互函数 (确保UI逻辑先加载)
-    
+    // 交互函数
     function stopProp(e) {
         if(e && e.stopPropagation) e.stopPropagation();
         else window.event.cancelBubble = true;
@@ -492,11 +489,9 @@
             for(var i=0; i<opts.length; i++) opts[i].classList.remove('selected');
             btn.classList.add('selected');
         } else {
-            // 取消“都不是”
             for(var i=0; i<opts.length; i++) {
                 if(opts[i].getAttribute('data-val') === '都不是') opts[i].classList.remove('selected');
             }
-            // 限制2个
             var selCount = 0;
             for(var i=0; i<opts.length; i++) if(opts[i].classList.contains('selected')) selCount++;
             if (!btn.classList.contains('selected') && selCount >= 2) {
@@ -564,7 +559,7 @@
         }
     }
 
-    // 排序逻辑 (箭头移动)
+    // 排序逻辑
     function moveUp(btn) {
         stopProp(window.event);
         var item = btn.parentNode.parentNode;
@@ -588,23 +583,7 @@
         for(var i=0; i<items.length; i++) items[i].innerText = (i+1);
     }
 
-    // 2. 初始化 Bmob (放在 try-catch 中，不影响 UI)
-    try {
-        Bmob.initialize("70f9577e95b2858b", "1234567890123456"); 
-        console.log("Bmob init ok");
-    } catch(e) {
-        console.error("Bmob fail", e);
-    }
-    
-    // 3. 尝试加载 Sortable，失败也没关系
-    try {
-        var el = document.getElementById('sortList');
-        if(typeof Sortable !== 'undefined') {
-            new Sortable(el, { animation: 150, handle: '.sort-handle', onEnd: updateSortNum });
-        }
-    } catch(e) {}
-
-    // 4. 提交数据
+    // 提交数据 (核心修改：使用原生 fetch 替代 SDK)
     function getMultiVals(gid) {
         var opts = document.querySelectorAll('#'+gid+' .selected');
         var arr = [];
@@ -620,6 +599,7 @@
     function submitData() {
         var btn = document.getElementById('btnSubmit');
 
+        // 数据收集
         var q1 = document.getElementById('input_q1').value;
         var q2 = document.getElementById('input_q2').value;
         var q3 = getMultiVals('group_q3');
@@ -655,34 +635,55 @@
         btn.innerText = "提交中...";
         btn.disabled = true;
 
-        var query = Bmob.Query('OysterJuiceSurvey');
-        query.set("q1_age", q1);
-        query.set("q2_role", q2);
-        query.set("q3_coastal", q3);
-        query.set("q4_freq", q4);
-        query.set("q4_reason", q4_2);
-        query.set("q5_recall", q5);
-        query.set("q6_recent", q6);
-        query.set("q7_why", q7);
-        query.set("q8_rank", q8.join('>'));
-        query.set("q9_pref", q9);
-        query.set("q10_aware", q10);
-        query.set("q11_opinion", q11);
-        query.set("q12_price", q12);
-        query.set("q13_trend", q13);
-        query.set("q14_channel", q14);
+        // 构造 JSON 数据
+        var postData = {
+            "q1_age": q1,
+            "q2_role": q2,
+            "q3_coastal": q3,
+            "q4_freq": q4,
+            "q4_reason": q4_2,
+            "q5_recall": q5,
+            "q6_recent": q6,
+            "q7_why": q7,
+            "q8_rank": q8.join('>'),
+            "q9_pref": q9,
+            "q10_aware": q10,
+            "q11_opinion": q11,
+            "q12_price": q12,
+            "q13_trend": q13,
+            "q14_channel": q14
+        };
 
-        query.save().then(function(res){
-            alert("✅ 提交成功！");
+        // 使用原生 Fetch 发送请求 (直连 Bmob，注意这里改为了 OysterJuiceSurve)
+        fetch('https://api.bmobcloud.com/1/classes/OysterJuiceSurve', {
+            method: 'POST',
+            headers: {
+                'X-Bmob-Application-Id': '56a52f384c54bf8178c1dfc4aaf314eb',
+                'X-Bmob-REST-API-Key': '13fe0ca6cd82988c13b3a9d052a11019',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(postData)
+        })
+        .then(function(response) {
+            if (response.ok) {
+                return response.json();
+            } else {
+                return response.json().then(function(err) { throw err; });
+            }
+        })
+        .then(function(data) {
+            alert("✅ 提交成功！感谢您的配合。");
             btn.innerText = "已完成";
-        }).catch(function(err){
-            // 详细错误报告
-            let msg = JSON.stringify(err);
-            if(err.code === 404) msg = "表名不对(需创建 OysterJuiceSurvey)";
-            if(err.code === 401) msg = "密钥错误(检查安全码)";
+        })
+        .catch(function(err) {
+            var msg = "未知错误";
+            // 这里特意把 Survey 改回 Surve 以匹配你截图中的表名
+            if(err.code === 404) msg = "找不到表 OysterJuiceSurve";
+            else if(err.error) msg = err.error;
+            else msg = JSON.stringify(err);
             
-            alert("提交失败: " + msg);
-            console.log(err);
+            alert("❌ 提交失败: " + msg);
+            console.error(err);
             btn.disabled = false;
             btn.innerText = "重试";
         });
