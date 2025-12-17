@@ -4,8 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>蚝汁消费与使用偏好调研</title>
+    <!-- 引入 Bmob SDK -->
+    <script src="https://unpkg.com/bmob-js-sdk-v4/dist/Bmob-4.0.0.min.js"></script>
+    <!-- 引入排序库 -->
+    <script src="https://cdn.bootcdn.net/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
     <style>
-        /* ================= 样式区 ================= */
+        /* ================= 样式区 (保持不变) ================= */
         :root { --primary: #D94436; --primary-bg: #FFF0F0; --gray-bg: #F7F8FA; --border: #E0E0E0; --text: #333; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif; background-color: var(--gray-bg); margin: 0; padding: 0; color: var(--text); padding-bottom: 120px; }
@@ -16,6 +20,7 @@
         .card { background: #fff; border-radius: 12px; padding: 18px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.03); }
         .q-title { font-weight: 700; font-size: 16px; margin-bottom: 12px; line-height: 1.5; color: #000; }
         .q-tag { background: var(--primary-bg); color: var(--primary); font-size: 12px; padding: 2px 6px; border-radius: 4px; margin-right: 6px; font-weight: bold; vertical-align: middle; }
+        .q-note { font-weight: normal; font-size: 12px; color: #999; }
         .btn-group { display: flex; flex-direction: column; gap: 10px; }
         .btn-option { padding: 14px 15px; background: #F9FAFB; border: 1px solid var(--border); border-radius: 8px; font-size: 15px; cursor: pointer; position: relative; line-height: 1.4; user-select: none; }
         .btn-option:active { background: #EFEFEF; }
@@ -163,6 +168,22 @@
     function moveDown(btn) { stopProp(window.event); var item = btn.parentNode.parentNode; var next = item.nextElementSibling; if(next) { item.parentNode.insertBefore(next, item); updateSortNum(); } }
     function updateSortNum() { var items = document.querySelectorAll('.sort-num'); for(var i=0; i<items.length; i++) items[i].innerText = (i+1); }
 
+    // 初始化 Bmob (关键修改：SDK + Secret Key + Safe Code)
+    try {
+        Bmob.initialize("70f9577e95b2858b", "1234567890123456"); 
+        console.log("Bmob init ok");
+    } catch(e) {
+        console.error("Bmob fail", e);
+    }
+    
+    // Sortable
+    try {
+        var el = document.getElementById('sortList');
+        if(typeof Sortable !== 'undefined') {
+            new Sortable(el, { animation: 150, handle: '.sort-handle', onEnd: updateSortNum });
+        }
+    } catch(e) {}
+
     function getMultiVals(gid) {
         var opts = document.querySelectorAll('#'+gid+' .selected'); var arr = [];
         for(var i=0; i<opts.length; i++) {
@@ -199,37 +220,33 @@
 
         btn.innerText = "提交中..."; btn.disabled = true;
 
-        var postData = {
-            "q1_age": q1, "q2_role": q2, "q3_coastal": q3, "q4_freq": q4, "q4_reason": q4_2,
-            "q5_recall": q5, "q6_recent": q6, "q7_why": q7, "q8_rank": q8.join('>'),
-            "q9_pref": q9, "q10_aware": q10, "q11_opinion": q11, "q12_price": q12, "q13_trend": q13, "q14_channel": q14
-        };
+        // 🔴 关键点：这里必须用 Test 表，因为这是我们在后台唯一新建且名字绝对没问题的表
+        var query = Bmob.Query('Test');
+        query.set("q1_age", q1);
+        query.set("q2_role", q2);
+        query.set("q3_coastal", q3);
+        query.set("q4_freq", q4);
+        query.set("q4_reason", q4_2);
+        query.set("q5_recall", q5);
+        query.set("q6_recent", q6);
+        query.set("q7_why", q7);
+        query.set("q8_rank", q8.join('>'));
+        query.set("q9_pref", q9);
+        query.set("q10_aware", q10);
+        query.set("q11_opinion", q11);
+        query.set("q12_price", q12);
+        query.set("q13_trend", q13);
+        query.set("q14_channel", q14);
 
-        // 🔴 重点：这里改为了 Test 表，请务必去 Bmob 新建一个 Test 表
-        fetch('https://api.bmobcloud.com/1/classes/Test', {
-            method: 'POST',
-            headers: {
-                'X-Bmob-Application-Id': '56a52f384c54bf8178c1dfc4aaf314eb',
-                'X-Bmob-REST-API-Key': '13fe0ca6cd82988c13b3a9d052a11019',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(postData)
-        })
-        .then(function(response) {
-            if (response.ok) return response.json();
-            else return response.json().then(function(err) { throw err; });
-        })
-        .then(function(data) {
-            alert("✅ 提交成功！感谢您的配合。");
+        query.save().then(function(res){
+            alert("✅ 提交成功！");
             btn.innerText = "已完成";
-        })
-        .catch(function(err) {
-            var msg = "未知错误";
-            if(err.code === 404) msg = "找不到表 Test (请去Bmob新建表 Test)";
-            else if(err.error) msg = err.error;
-            else msg = JSON.stringify(err);
+        }).catch(function(err){
+            var msg = JSON.stringify(err);
+            if(err.code === 404) msg = "找不到表 Test (请确认后台已新建 Test 表)";
+            if(err.code === 401) msg = "安全码验证失败 (请检查后台设置)";
             alert("❌ 提交失败: " + msg);
-            console.error(err);
+            console.log(err);
             btn.disabled = false; btn.innerText = "重试";
         });
     }
