@@ -4,276 +4,56 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>蚝汁消费偏好调研</title>
+    <!-- Bmob SDK -->
     <script src="https://unpkg.com/bmob-js-sdk-v4/dist/Bmob-4.0.0.min.js"></script>
+    <!-- 拖拽排序库 SortableJS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
     <style>
         :root {
-            --primary: #FF5E57; /* 更活泼的珊瑚红 */
-            --primary-light: #FFF0F0;
+            --primary: #D94436; /* 蚝油红 */
+            --primary-light: #FFECEB;
+            --bg: #F5F6FA;
+            --card: #FFFFFF;
             --text: #2D3436;
             --gray: #636E72;
-            --bg: #F0F2F5;
-            --card-bg: #FFFFFF;
-            --shadow: 0 4px 20px rgba(0,0,0,0.05);
-            --radius: 16px;
+            --radius: 12px;
         }
 
-        body { 
-            font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", Arial, sans-serif; 
-            background-color: var(--bg); 
-            margin: 0; 
-            padding: 0; 
-            color: var(--text); 
-            line-height: 1.6; 
-            padding-bottom: 80px;
-        }
-
-        /* 顶部进度条 */
-        .progress-bar-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 6px;
-            background: #eee;
-            z-index: 999;
-        }
-        .progress-bar {
-            height: 100%;
-            background: linear-gradient(90deg, #FF5E57, #FF8080);
-            width: 0%;
-            transition: width 0.4s ease;
-        }
-
-        .header {
-            background: linear-gradient(135deg, #FF5E57 0%, #FF2E2E 100%);
-            padding: 30px 20px 40px;
-            text-align: center;
-            color: white;
-            border-bottom-left-radius: 20px;
-            border-bottom-right-radius: 20px;
-            margin-bottom: -20px;
-        }
-        .header h1 { margin: 0; font-size: 22px; font-weight: 700; }
-        .header p { margin: 8px 0 0; opacity: 0.9; font-size: 13px; }
-
-        .container { max-width: 600px; margin: 0 auto; padding: 0 15px; }
-
-        /* 卡片样式 */
-        .question-card {
-            background: var(--card-bg);
-            padding: 20px;
-            border-radius: var(--radius);
-            margin-bottom: 20px;
-            box-shadow: var(--shadow);
-            opacity: 0;
-            transform: translateY(20px);
-            animation: slideUp 0.5s forwards;
-        }
-
-        @keyframes slideUp {
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .q-title { 
-            font-weight: 700; 
-            font-size: 16px; 
-            margin-bottom: 15px; 
-            display: flex; 
-            align-items: center; 
-        }
-        .q-badge {
-            background: var(--primary-light);
-            color: var(--primary);
-            font-size: 12px;
-            padding: 2px 8px;
-            border-radius: 10px;
-            margin-right: 8px;
-        }
-        .q-note { font-size: 12px; color: #999; font-weight: normal; margin-left: auto; }
-
-        /* 交互式选项按钮 (替代传统单选框) */
-        .option-btn-group { display: flex; flex-direction: column; gap: 10px; }
-        .option-btn {
-            display: flex;
-            align-items: center;
-            padding: 14px 16px;
-            background: #F8F9FA;
-            border: 2px solid transparent;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-size: 15px;
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--bg);
+            margin: 0; padding: 0;
             color: var(--text);
-            position: relative;
-        }
-        .option-btn:active { transform: scale(0.98); }
-        
-        /* 选中状态 */
-        .option-btn.selected {
-            background: var(--primary-light);
-            border-color: var(--primary);
-            color: var(--primary);
-            font-weight: bold;
-        }
-        .option-btn.selected::after {
-            content: '✓';
-            position: absolute;
-            right: 15px;
-            font-weight: bold;
+            padding-bottom: 80px;
+            user-select: none; /* 防止长按复制文本影响体验 */
         }
 
-        /* 隐藏原生 Radio/Checkbox */
-        .hidden-input { display: none; }
-
-        /* 排序题特殊样式 */
-        .rank-grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-        .rank-item {
-            padding: 10px 15px;
-            background: #fff;
-            border: 1px solid #ddd;
-            border-radius: 20px;
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.2s;
-            position: relative;
-        }
-        .rank-item.active {
-            background: var(--primary);
+        /* 顶部导航 */
+        .header {
+            background: linear-gradient(135deg, #D94436 0%, #FF6B6B 100%);
+            padding: 30px 20px 40px;
             color: white;
-            border-color: var(--primary);
-            padding-right: 30px;
+            border-bottom-left-radius: 24px;
+            border-bottom-right-radius: 24px;
+            box-shadow: 0 4px 15px rgba(217, 68, 54, 0.3);
         }
-        .rank-badge {
-            position: absolute;
-            top: -8px;
-            right: -5px;
-            background: #FFD700;
-            color: #333;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            font-size: 12px;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-            display: none;
-        }
-        .rank-item.active .rank-badge { display: flex; }
+        .header h1 { margin: 0; font-size: 22px; font-weight: 800; }
+        .header p { margin: 8px 0 0; font-size: 13px; opacity: 0.9; }
 
-        /* 输入框美化 */
-        input[type="text"] {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 10px;
-            font-size: 15px;
-            outline: none;
-            box-sizing: border-box;
-            transition: border 0.3s;
-            background: #fafafa;
-        }
-        input[type="text"]:focus { border-color: var(--primary); background: #fff; }
+        .container { max-width: 600px; margin: -30px auto 0; padding: 0 16px; position: relative; z-index: 10; }
 
-        .btn-submit {
-            display: block;
-            width: 100%;
-            background: linear-gradient(90deg, #FF5E57, #FF2E2E);
-            color: #fff;
-            padding: 16px;
-            border: none;
-            border-radius: 50px;
-            font-size: 18px;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 8px 20px rgba(255, 94, 87, 0.4);
+        /* 卡片通用样式 */
+        .card {
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
             transition: transform 0.2s;
         }
-        .btn-submit:active { transform: scale(0.95); }
-
-        .hidden { display: none; }
-        .section-header { 
-            margin: 30px 10px 15px; 
-            font-size: 14px; 
-            font-weight: bold; 
-            color: var(--gray);
-            letter-spacing: 1px;
-            text-transform: uppercase;
+        .q-title {
+            font-weight: 700; font-size: 16px; margin-bottom: 16px;
+            line-height: 1.5; color: #000;
         }
-    </style>
-</head>
-<body>
-
-<!-- 进度条 -->
-<div class="progress-bar-container">
-    <div class="progress-bar" id="progressBar"></div>
-</div>
-
-<div class="header">
-    <h1>🥘 蚝汁/蚝油消费小调研</h1>
-    <p>您的意见将决定下一款国民级产品的诞生</p>
-</div>
-
-<div class="container">
-    <form id="surveyForm">
-        
-        <div class="section-header">01 / 基础信息</div>
-
-        <!-- Q1 年龄 -->
-        <div class="question-card" style="animation-delay: 0.1s">
-            <div class="q-title"><span class="q-badge">1</span> 您的年龄段？</div>
-            <div class="option-btn-group" id="q1_group">
-                <!-- 选项由 JS 渲染点击效果 -->
-                <div class="option-btn" onclick="selectRadio('q1', this, '18-25岁')">🌱 18-25岁</div>
-                <div class="option-btn" onclick="selectRadio('q1', this, '26-35岁')">💼 26-35岁</div>
-                <div class="option-btn" onclick="selectRadio('q1', this, '36-45岁')">🏠 36-45岁</div>
-                <div class="option-btn" onclick="selectRadio('q1', this, '46-55岁')">☕ 46-55岁</div>
-                <div class="option-btn" onclick="selectRadio('q1', this, '56岁及以上')">👴 56岁及以上</div>
-            </div>
-            <input type="hidden" name="q1" id="q1_input">
-        </div>
-
-        <!-- Q2 购买者 -->
-        <div class="question-card" style="animation-delay: 0.2s">
-            <div class="q-title"><span class="q-badge">2</span> 家里谁买调味品？</div>
-            <div class="option-btn-group">
-                <div class="option-btn" onclick="selectRadio('q2', this, '自己')">🙋 自己</div>
-                <div class="option-btn" onclick="selectRadio('q2', this, '配偶/伴侣')">💑 配偶/伴侣</div>
-                <div class="option-btn" onclick="selectRadio('q2', this, '父母')">👪 父母</div>
-                <div class="option-btn" onclick="selectRadio('q2', this, '其他')">⚪ 其他</div>
-            </div>
-            <input type="hidden" name="q2" id="q2_input">
-        </div>
-
-        <!-- Q3 频率 -->
-        <div class="question-card" style="animation-delay: 0.3s">
-            <div class="q-title"><span class="q-badge">3</span> 您家蚝油使用频率？</div>
-            <div class="option-btn-group">
-                <div class="option-btn" onclick="selectRadio('q3', this, '几乎每天')">🔥 几乎每天用</div>
-                <div class="option-btn" onclick="selectRadio('q3', this, '每周几次')">🗓️ 每周几次</div>
-                <div class="option-btn" onclick="selectRadio('q3', this, '每月几次')">🌙 每月几次</div>
-                <div class="option-btn" onclick="selectRadio('q3', this, '很少使用')">❄️ 很少使用</div>
-            </div>
-            <input type="hidden" name="q3" id="q3_input">
-        </div>
-
-        <div class="section-header">02 / 品牌与偏好</div>
-
-        <!-- Q4 品牌 (简化版) -->
-        <div class="question-card">
-            <div class="q-title"><span class="q-badge">4</span> 提到蚝油，您脑海里第一个蹦出来的品牌是？</div>
-            <input type="text" id="q4_1" placeholder="请填写一个印象最深的品牌..." oninput="updateProgress()">
-        </div>
-
-        <!-- Q5 最近购买 -->
-        <div class="question-card">
-            <div class="q-title"><span class="q-badge">5</span> 最近一次买的是哪个牌子？</div>
-            <div class="option-btn-group">
-                <div class="option-btn" onclick="selectRadio('q5', this, '海天')">海天</div>
-                <div class="option-btn" onclick="selectRadio('q5', this, '李锦记')">李锦记</div>
-                <div class="option-btn" onclick="selectRadio(
+        .q-tag {
+            background: var(--primary-light); co
