@@ -31,7 +31,7 @@
             border-bottom-left-radius: 24px;
             border-bottom-right-radius: 24px;
         }
-        .header h1 { margin: 0; font-size: 22px; font-weight: bold; }
+        .header h1 { margin: 0; font-size: 20px; font-weight: bold; }
         .header p { margin: 8px 0 0; font-size: 13px; opacity: 0.9; }
 
         .container { 
@@ -39,7 +39,7 @@
             margin: -30px auto 0; 
             padding: 0 15px; 
             position: relative; 
-            z-index: 10; /* 保证在最上层，可点击 */
+            z-index: 10; 
         }
 
         /* 卡片 */
@@ -60,7 +60,7 @@
             margin-right: 6px; font-weight: bold; vertical-align: middle;
         }
 
-        /* 核心选项按钮 - 强制增加点击区域 */
+        /* 选项按钮 */
         .btn-group { display: flex; flex-direction: column; gap: 10px; }
         .btn-option {
             padding: 14px 15px;
@@ -71,12 +71,9 @@
             cursor: pointer;
             position: relative;
             line-height: 1.4;
-            /* 关键：确保不被遮挡 */
-            z-index: 1; 
             user-select: none;
         }
-        /* 点击时的即时反馈 */
-        .btn-option:active { background: #EFEFEF; transform: scale(0.99); }
+        .btn-option:active { background: #EFEFEF; }
         
         /* 选中状态 */
         .btn-option.selected {
@@ -111,7 +108,7 @@
         .sort-list { list-style: none; padding: 0; margin: 0; }
         .sort-item {
             background: white; border: 1px solid #EEE;
-            padding: 12px; margin-bottom: 8px;
+            padding: 10px; margin-bottom: 8px;
             border-radius: 8px; display: flex; align-items: center;
             justify-content: space-between;
         }
@@ -123,7 +120,7 @@
         .sort-text { flex-grow: 1; font-size: 14px; padding-right: 5px; }
         .sort-actions { display: flex; align-items: center; gap: 5px; }
         .move-btn {
-            width: 34px; height: 34px; border: 1px solid #EEE; background: #FFF;
+            width: 32px; height: 32px; border: 1px solid #EEE; background: #FFF;
             border-radius: 6px; color: #666; font-size: 18px; display: flex;
             align-items: center; justify-content: center; cursor: pointer; z-index: 2;
         }
@@ -676,20 +673,15 @@
         query.set("q14_channel", q14);
 
         query.save().then(function(res){
-            alert("✅ 提交成功！数据已保存。");
+            alert("✅ 提交成功！");
             btn.innerText = "已完成";
         }).catch(function(err){
-            // 🔴 这里改动了：把错误详细信息弹出来
-            var errorMsg = "未知错误";
-            if (typeof err === 'object') {
-                errorMsg = JSON.stringify(err);
-                if (err.code === 404) errorMsg = "错误 404：找不到数据表（表名不对）";
-                if (err.code === 401) errorMsg = "错误 401：密钥或安全码不对";
-                if (err.error) errorMsg = err.error;
-            } else {
-                errorMsg = err;
-            }
-            alert("❌ 提交失败！原因：" + errorMsg);
+            // 详细错误报告
+            let msg = JSON.stringify(err);
+            if(err.code === 404) msg = "表名不对(需创建 OysterJuiceSurvey)";
+            if(err.code === 401) msg = "密钥错误(检查安全码)";
+            
+            alert("提交失败: " + msg);
             console.log(err);
             btn.disabled = false;
             btn.innerText = "重试";
@@ -699,4 +691,3 @@
 
 </body>
 </html>
-
