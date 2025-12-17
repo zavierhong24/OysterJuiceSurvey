@@ -5,40 +5,46 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>蚝汁消费与使用偏好调研</title>
     <style>
-        /* 全局样式 - 防白屏设计 */
+        /* ================= 样式区 ================= */
         :root {
-            --primary: #D94436; /* 蚝油红 */
-            --primary-light: #FFECEB;
-            --bg: #F5F6FA;
-            --card: #FFFFFF;
+            --primary: #D94436;
+            --primary-bg: #FFF0F0;
+            --gray-bg: #F7F8FA;
+            --border: #E0E0E0;
             --text: #333;
         }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
         body {
             font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
-            background-color: var(--bg);
+            background-color: var(--gray-bg);
             margin: 0; padding: 0;
             color: var(--text);
-            padding-bottom: 120px; /* 底部留白增加 */
-            -webkit-tap-highlight-color: transparent;
+            padding-bottom: 120px;
         }
 
         /* 头部 */
         .header {
-            background: linear-gradient(135deg, #D94436 0%, #FF6B6B 100%);
+            background: #D94436;
             padding: 30px 20px 40px;
             color: white;
-            border-bottom-left-radius: 20px;
-            border-bottom-right-radius: 20px;
-            box-shadow: 0 4px 10px rgba(217, 68, 54, 0.2);
+            border-bottom-left-radius: 24px;
+            border-bottom-right-radius: 24px;
         }
-        .header h1 { margin: 0; font-size: 20px; font-weight: 800; }
+        .header h1 { margin: 0; font-size: 22px; font-weight: bold; }
         .header p { margin: 8px 0 0; font-size: 13px; opacity: 0.9; }
 
-        .container { max-width: 600px; margin: -30px auto 0; padding: 0 15px; position: relative; z-index: 2; }
+        .container { 
+            max-width: 600px; 
+            margin: -30px auto 0; 
+            padding: 0 15px; 
+            position: relative; 
+            z-index: 10; /* 保证在最上层，可点击 */
+        }
 
         /* 卡片 */
         .card {
-            background: var(--card);
+            background: #fff;
             border-radius: 12px;
             padding: 18px;
             margin-bottom: 15px;
@@ -49,28 +55,32 @@
             line-height: 1.5; color: #000;
         }
         .q-tag {
-            background: var(--primary-light); color: var(--primary);
+            background: var(--primary-bg); color: var(--primary);
             font-size: 12px; padding: 2px 6px; border-radius: 4px;
             margin-right: 6px; font-weight: bold; vertical-align: middle;
         }
-        .q-note { font-weight: normal; font-size: 12px; color: #999; }
 
-        /* 按钮选项 */
-        .btn-group { display: flex; flex-direction: column; gap: 8px; }
+        /* 核心选项按钮 - 强制增加点击区域 */
+        .btn-group { display: flex; flex-direction: column; gap: 10px; }
         .btn-option {
-            padding: 12px 15px;
-            background: #F8F9FA;
-            border: 1px solid #EEE;
+            padding: 14px 15px;
+            background: #F9FAFB;
+            border: 1px solid var(--border);
             border-radius: 8px;
-            font-size: 14px;
+            font-size: 15px;
             cursor: pointer;
-            transition: all 0.1s;
             position: relative;
             line-height: 1.4;
+            /* 关键：确保不被遮挡 */
+            z-index: 1; 
+            user-select: none;
         }
-        .btn-option:active { background: #EFEFEF; }
+        /* 点击时的即时反馈 */
+        .btn-option:active { background: #EFEFEF; transform: scale(0.99); }
+        
+        /* 选中状态 */
         .btn-option.selected {
-            background: var(--primary-light);
+            background: var(--primary-bg);
             border-color: var(--primary);
             color: var(--primary);
             font-weight: bold;
@@ -82,10 +92,9 @@
         /* 品牌游戏区 */
         .brand-slots { display: flex; gap: 8px; margin-bottom: 12px; }
         .brand-slot {
-            flex: 1; height: 36px; border: 2px dashed #CCC;
+            flex: 1; height: 40px; border: 2px dashed #CCC;
             border-radius: 6px; display: flex; align-items: center; justify-content: center;
-            font-size: 12px; color: #999; background: #FAFAFA;
-            position: relative;
+            font-size: 13px; color: #999; background: #FAFAFA;
         }
         .brand-slot.filled {
             background: #FFF0F0; border-color: #D94436; border-style: solid;
@@ -93,74 +102,57 @@
         }
         .brand-pool { display: flex; flex-wrap: wrap; gap: 8px; }
         .brand-chip {
-            padding: 6px 12px; background: white; border: 1px solid #DDD;
-            border-radius: 20px; font-size: 13px; cursor: pointer;
+            padding: 8px 14px; background: white; border: 1px solid #DDD;
+            border-radius: 20px; font-size: 14px; cursor: pointer;
         }
         .brand-chip.disabled { background: #EEE; color: #BBB; pointer-events: none; }
 
-        /* --- 优化后的排序样式 --- */
+        /* 排序题样式 */
         .sort-list { list-style: none; padding: 0; margin: 0; }
         .sort-item {
             background: white; border: 1px solid #EEE;
-            padding: 10px; margin-bottom: 8px;
+            padding: 12px; margin-bottom: 8px;
             border-radius: 8px; display: flex; align-items: center;
             justify-content: space-between;
-            transition: background 0.2s;
         }
-        /* 序号 */
         .sort-num {
             background: #F0F0F0; width: 24px; height: 24px; border-radius: 50%;
             text-align: center; line-height: 24px; font-size: 12px; 
             margin-right: 10px; color: #666; font-weight: bold; flex-shrink: 0;
         }
-        /* 文本 */
         .sort-text { flex-grow: 1; font-size: 14px; padding-right: 5px; }
-        /* 操作区 */
         .sort-actions { display: flex; align-items: center; gap: 5px; }
-        /* 移动按钮 */
         .move-btn {
-            width: 32px; height: 32px; border: 1px solid #EEE; background: #FFF;
-            border-radius: 6px; color: #666; font-size: 16px; display: flex;
-            align-items: center; justify-content: center; cursor: pointer;
+            width: 34px; height: 34px; border: 1px solid #EEE; background: #FFF;
+            border-radius: 6px; color: #666; font-size: 18px; display: flex;
+            align-items: center; justify-content: center; cursor: pointer; z-index: 2;
         }
-        .move-btn:active { background: #F5F5F5; }
-        /* 拖拽把手 */
-        .sort-handle { 
-            font-size: 22px; color: #CCC; padding: 5px 0 5px 10px; cursor: grab; 
-            touch-action: none; /* 关键：防止拖拽时页面滚动 */
-        }
-
+        .move-btn:active { background: #DDD; }
+        
         /* 提交按钮 */
         .submit-btn {
-            background: var(--primary); color: white; width: 100%;
+            background: #D94436; color: white; width: 100%;
             padding: 16px; border: none; border-radius: 30px;
-            font-size: 16px; font-weight: bold; margin-top: 20px;
+            font-size: 18px; font-weight: bold; margin-top: 20px;
             box-shadow: 0 6px 20px rgba(217, 68, 54, 0.3);
             cursor: pointer;
         }
-        .submit-btn:disabled { background: #CCC; box-shadow: none; cursor: not-allowed; }
-        
         .hidden { display: none !important; }
         .section-title { font-size: 13px; color: #999; text-align: center; margin: 25px 0 15px; font-weight: bold; letter-spacing: 1px; }
-        
-        input[type="text"].inline-input { 
-            border: none; border-bottom: 1px solid #ccc; 
-            background: transparent; outline: none; 
-            width: 120px; margin-left: 5px; font-size: 14px;
-        }
+        input.inline-input { border: none; border-bottom: 1px solid #ccc; background: transparent; outline: none; width: 120px; margin-left: 5px; font-size: 14px; }
     </style>
 </head>
 <body>
 
 <div class="header">
     <h1>🥘 蚝汁/蚝油消费与使用调研</h1>
-    <p>简单点选，2分钟即可完成</p>
+    <p>选项点击即生效，感谢您的支持</p>
 </div>
 
 <div class="container">
     <form id="surveyForm">
 
-        <!-- ================= 第1部分 ================= -->
+        <!-- 第1部分 -->
         <div class="section-title">01 / 用户画像与消费基础</div>
 
         <!-- Q1 -->
@@ -178,7 +170,7 @@
 
         <!-- Q2 -->
         <div class="card">
-            <div class="q-title"><span class="q-tag">Q2</span>您家中负责购买调味品的人主要是？</div>
+            <div class="q-title"><span class="q-tag">Q2</span>家中谁买调味品？</div>
             <div class="btn-group" id="group_q2">
                 <div class="btn-option" onclick="selectSingle('q2', this)" data-val="自己">自己</div>
                 <div class="btn-option" onclick="selectSingle('q2', this)" data-val="配偶/伴侣">配偶/伴侣</div>
@@ -188,9 +180,9 @@
             <input type="hidden" id="input_q2">
         </div>
 
-        <!-- Q3 沿海 (互斥逻辑) -->
+        <!-- Q3 沿海 -->
         <div class="card">
-            <div class="q-title"><span class="q-tag">Q3</span>您和您家庭成员常住地或祖籍是沿海地区吗？<span class="q-note">（至多选2项）</span></div>
+            <div class="q-title"><span class="q-tag">Q3</span>是否为沿海地区？<span style="font-size:12px;color:#999">（至多选2项）</span></div>
             <div class="btn-group" id="group_q3">
                 <div class="btn-option" onclick="selectCoastal(this)" data-val="常住地是">常住地是沿海地区</div>
                 <div class="btn-option" onclick="selectCoastal(this)" data-val="祖籍是">祖籍是沿海地区</div>
@@ -200,7 +192,7 @@
 
         <!-- Q4 频率 -->
         <div class="card">
-            <div class="q-title"><span class="q-tag">Q4</span>您家中使用蚝油的频率是？</div>
+            <div class="q-title"><span class="q-tag">Q4</span>使用频率？</div>
             <div class="btn-group" id="group_q4">
                 <div class="btn-option" onclick="selectFreq(this)" data-val="几乎每天使用">几乎每天使用</div>
                 <div class="btn-option" onclick="selectFreq(this)" data-val="每周几次">每周几次</div>
@@ -211,28 +203,28 @@
             <input type="hidden" id="input_q4">
         </div>
 
-        <!-- Q4.2 不用原因 -->
+        <!-- Q4.2 原因 -->
         <div class="card hidden" id="card_q4_2">
-            <div class="q-title"><span class="q-tag">Q4.2</span>您家中不使用蚝油的原因？<span class="q-note">（多选）</span></div>
+            <div class="q-title"><span class="q-tag">Q4.2</span>不用蚝油的原因？<span style="font-size:12px;color:#999">（多选）</span></div>
             <div class="btn-group" id="group_q4_2">
                 <div class="btn-option" onclick="selectMulti(this)" data-val="控盐">需要控钠低盐饮食</div>
                 <div class="btn-option" onclick="selectMulti(this)" data-val="忌口">忌口，不喜欢海腥味</div>
                 <div class="btn-option" onclick="selectMulti(this)" data-val="海鲜过敏">海鲜过敏</div>
                 <div class="btn-option" onclick="selectMulti(this)" data-val="添加剂">不喜欢添加剂</div>
                 <div class="btn-option" onclick="selectMulti(this)" data-val="控糖">控糖或者低碳水</div>
-                <div class="btn-option" onclick="selectMulti(this)" data-val="不知用法">不知道使用量或不认为有使用的必要性</div>
+                <div class="btn-option" onclick="selectMulti(this)" data-val="不知用法">不知用法/没必要</div>
                 <div class="btn-option" onclick="selectMulti(this)" data-val="色深">色泽太深</div>
                 <div class="btn-option" onclick="selectMulti(this)" data-val="替代品">有其他替代品</div>
                 <div class="btn-option" onclick="selectMulti(this)" data-val="其他">其他原因</div>
             </div>
         </div>
 
-        <!-- ================= 第2部分 ================= -->
+        <!-- 第2部分 -->
         <div class="section-title">02 / 品牌认知与购买行为</div>
 
         <!-- Q5 品牌印象 -->
         <div class="card">
-            <div class="q-title"><span class="q-tag">Q5</span>提到蚝油，您最先想到的三个品牌是？</div>
+            <div class="q-title"><span class="q-tag">Q5</span>印象最深的三个品牌？</div>
             <div class="brand-slots">
                 <div class="brand-slot" id="slot_0" onclick="removeBrand(0)">第一提及</div>
                 <div class="brand-slot" id="slot_1" onclick="removeBrand(1)">第二提及</div>
@@ -256,7 +248,7 @@
 
         <!-- Q6 最近购买 -->
         <div class="card">
-            <div class="q-title"><span class="q-tag">Q6</span>您最近一次购买的蚝油品牌是？</div>
+            <div class="q-title"><span class="q-tag">Q6</span>最近购买的品牌？</div>
             <div class="btn-group" id="group_q6">
                 <div class="btn-option" onclick="selectSingle('q6', this)" data-val="海天">海天</div>
                 <div class="btn-option" onclick="selectSingle('q6', this)" data-val="李锦记">李锦记</div>
@@ -265,15 +257,15 @@
                 <div class="btn-option" onclick="selectSingle('q6', this)" data-val="林小生">林小生</div>
                 <div class="btn-option" onclick="selectSingle('q6', this)" data-val="沙井乡">沙井乡</div>
                 <div class="btn-option" onclick="selectSingle('q6', this)" data-val="阳江">阳江</div>
-                <div class="btn-option" onclick="selectSingle('q6', this)" data-val="进口">进口（如泰国主厨牌、韩国清净园等）</div>
-                <div class="btn-option" onclick="selectSingle('q6', this)" data-val="其他">其他 <input type="text" id="q6_other" class="inline-input" onclick="event.stopPropagation()"></div>
+                <div class="btn-option" onclick="selectSingle('q6', this)" data-val="进口">进口品牌</div>
+                <div class="btn-option" onclick="selectSingle('q6', this)" data-val="其他">其他 <input type="text" id="q6_other" class="inline-input" onclick="stopProp(event)"></div>
             </div>
             <input type="hidden" id="input_q6">
         </div>
 
         <!-- Q7 原因 -->
         <div class="card">
-            <div class="q-title"><span class="q-tag">Q7</span>您选择该品牌蚝油的主要原因？<span class="q-note">（多选，最多3项）</span></div>
+            <div class="q-title"><span class="q-tag">Q7</span>购买原因？<span style="font-size:12px;color:#999">（多选，最多3项）</span></div>
             <div class="btn-group" id="group_q7">
                 <div class="btn-option" onclick="selectMultiLimit(this, 3)" data-val="品牌">品牌信誉好</div>
                 <div class="btn-option" onclick="selectMultiLimit(this, 3)" data-val="口味">口味/鲜味好</div>
@@ -282,19 +274,17 @@
                 <div class="btn-option" onclick="selectMultiLimit(this, 3)" data-val="推荐">亲友推荐</div>
                 <div class="btn-option" onclick="selectMultiLimit(this, 3)" data-val="促销">促销活动</div>
                 <div class="btn-option" onclick="selectMultiLimit(this, 3)" data-val="包装">包装设计好</div>
-                <div class="btn-option" onclick="selectMultiLimit(this, 3)" data-val="工艺">传统工艺（非遗标志，古法熬制）</div>
+                <div class="btn-option" onclick="selectMultiLimit(this, 3)" data-val="工艺">传统工艺（非遗/古法）</div>
                 <div class="btn-option" onclick="selectMultiLimit(this, 3)" data-val="有机">有机</div>
-                <div class="btn-option" onclick="selectMultiLimit(this, 3)" data-val="其他">其他 <input type="text" class="inline-input" onclick="event.stopPropagation()"></div>
+                <div class="btn-option" onclick="selectMultiLimit(this, 3)" data-val="其他">其他 <input type="text" class="inline-input" onclick="stopProp(event)"></div>
             </div>
         </div>
 
-        <!-- Q8 排序 (优化版：拖拽 + 按钮双重操作) -->
+        <!-- Q8 排序 -->
         <div class="card">
-            <div class="q-title"><span class="q-tag">Q8</span>购买时最关注哪些因素？</div>
-            <div style="background:#F0F8FF; padding:8px; border-radius:6px; margin-bottom:10px; font-size:12px; color:#555;">
-                👇 <strong>两种调整方式：</strong><br>
-                1. 点击 <strong>↑ ↓ 箭头</strong> 调整顺序（推荐）<br>
-                2. 或按住右侧 <strong>☰ 图标</strong> 上下拖动
+            <div class="q-title"><span class="q-tag">Q8</span>最关注因素排序</div>
+            <div style="background:#F0F8FF; padding:10px; border-radius:6px; margin-bottom:10px; font-size:12px; color:#555;">
+                👇 <strong>请使用右侧箭头调整顺序：</strong>
             </div>
             
             <ul class="sort-list" id="sortList">
@@ -304,7 +294,6 @@
                     <div class="sort-actions">
                         <div class="move-btn" onclick="moveUp(this)">↑</div>
                         <div class="move-btn" onclick="moveDown(this)">↓</div>
-                        <div class="sort-handle">☰</div>
                     </div>
                 </li>
                 <li class="sort-item" data-id="蚝汁含量">
@@ -313,7 +302,6 @@
                     <div class="sort-actions">
                         <div class="move-btn" onclick="moveUp(this)">↑</div>
                         <div class="move-btn" onclick="moveDown(this)">↓</div>
-                        <div class="sort-handle">☰</div>
                     </div>
                 </li>
                 <li class="sort-item" data-id="零添加">
@@ -322,7 +310,6 @@
                     <div class="sort-actions">
                         <div class="move-btn" onclick="moveUp(this)">↑</div>
                         <div class="move-btn" onclick="moveDown(this)">↓</div>
-                        <div class="sort-handle">☰</div>
                     </div>
                 </li>
                 <li class="sort-item" data-id="价格">
@@ -331,7 +318,6 @@
                     <div class="sort-actions">
                         <div class="move-btn" onclick="moveUp(this)">↑</div>
                         <div class="move-btn" onclick="moveDown(this)">↓</div>
-                        <div class="sort-handle">☰</div>
                     </div>
                 </li>
                 <li class="sort-item" data-id="品牌">
@@ -340,7 +326,6 @@
                     <div class="sort-actions">
                         <div class="move-btn" onclick="moveUp(this)">↑</div>
                         <div class="move-btn" onclick="moveDown(this)">↓</div>
-                        <div class="sort-handle">☰</div>
                     </div>
                 </li>
                 <li class="sort-item" data-id="包装">
@@ -349,7 +334,6 @@
                     <div class="sort-actions">
                         <div class="move-btn" onclick="moveUp(this)">↑</div>
                         <div class="move-btn" onclick="moveDown(this)">↓</div>
-                        <div class="sort-handle">☰</div>
                     </div>
                 </li>
                 <li class="sort-item" data-id="促销">
@@ -358,7 +342,6 @@
                     <div class="sort-actions">
                         <div class="move-btn" onclick="moveUp(this)">↑</div>
                         <div class="move-btn" onclick="moveDown(this)">↓</div>
-                        <div class="sort-handle">☰</div>
                     </div>
                 </li>
                 <li class="sort-item" data-id="附加值">
@@ -367,72 +350,62 @@
                     <div class="sort-actions">
                         <div class="move-btn" onclick="moveUp(this)">↑</div>
                         <div class="move-btn" onclick="moveDown(this)">↓</div>
-                        <div class="sort-handle">☰</div>
                     </div>
                 </li>
             </ul>
         </div>
 
-        <!-- ================= 第3部分 ================= -->
+        <!-- 第3部分 -->
         <div class="section-title">03 / 产品使用与偏好测试</div>
 
         <!-- Q9 新型蚝油 -->
         <div class="card">
-            <div class="q-title"><span class="q-tag">Q9</span>选一款最能接受的新型蚝油：</div>
+            <div class="q-title"><span class="q-tag">Q9</span>最能接受的新型蚝油？</div>
             <div class="btn-group" id="group_q9">
                 <div class="btn-option" onclick="selectSingle('q9', this)" data-val="100%蚝汁">稀但很鲜美的100%蚝汁</div>
                 <div class="btn-option" onclick="selectSingle('q9', this)" data-val="伴馅蚝油">稠但醇厚的伴馅用蚝油</div>
                 <div class="btn-option" onclick="selectSingle('q9', this)" data-val="素蚝油">松茸等为原料的素蚝油</div>
-                <div class="btn-option" onclick="selectSingle('q9', this)" data-val="蚝油鲜露">多重滋味（添加其他调味品）的蚝油鲜露</div>
+                <div class="btn-option" onclick="selectSingle('q9', this)" data-val="蚝油鲜露">多重滋味的蚝油鲜露</div>
                 <div class="btn-option" onclick="selectSingle('q9', this)" data-val="都不喜欢">都不喜欢</div>
             </div>
             <input type="hidden" id="input_q9">
         </div>
 
-        <!-- Q10 认知 (特殊设计) -->
+        <!-- Q10 认知 -->
         <div class="card">
             <div class="q-title">
                 <span class="q-tag">Q10</span>
-                您是否听说或购买过主打 <span style="color:#D94436; font-weight:900">“高蚝汁含量”</span> 或 <span style="color:#D94436; font-weight:900">“洁净配方”</span> 的蚝油品牌？
+                是否听说或购买过主打 <span style="color:#D94436">“高蚝汁含量”</span> 或 <span style="color:#D94436">“洁净配方”</span> 的蚝油？
             </div>
-            
-            <!-- 定义提示框 -->
             <div style="background:#F9F9F9; padding:10px; border-radius:8px; margin-bottom:15px; border-left: 3px solid #D94436;">
                 <p style="margin:0; font-size:12px; color:#666; line-height:1.5;">
-                    💡 <strong>例如：林小生</strong> 等品牌。<br>
-                    通常指蚝汁添加量较高，或配料表精简（主打0添加防腐剂/味精等）的产品。
+                    💡 <strong>例如：林小生</strong> 等。<br>
+                    指蚝汁添加量高，或0添加防腐剂/味精等。
                 </p>
             </div>
-
             <div class="btn-group" id="group_q10">
-                <div class="btn-option" onclick="selectQ10(this)" data-val="是，购买过">
-                    🛒 <strong>是，购买过</strong>
-                </div>
-                <div class="btn-option" onclick="selectQ10(this)" data-val="是，听说过">
-                    👂 <strong>是，听说过但未购买过</strong>
-                </div>
-                <div class="btn-option" onclick="selectQ10(this)" data-val="没听说过">
-                    ❌ <strong>没听说过</strong>
-                </div>
+                <div class="btn-option" onclick="selectQ10(this)" data-val="是，购买过">🛒 <strong>是，购买过</strong></div>
+                <div class="btn-option" onclick="selectQ10(this)" data-val="是，听说过">👂 <strong>是，听说过但未购买过</strong></div>
+                <div class="btn-option" onclick="selectQ10(this)" data-val="没听说过">❌ <strong>没听说过</strong></div>
             </div>
             <input type="hidden" id="input_q10">
         </div>
 
         <!-- Q11 看法 -->
         <div class="card hidden" id="card_q11">
-            <div class="q-title"><span class="q-tag">Q11</span>您对这类“高蚝汁/洁净配方”蚝油的看法是？<span class="q-note">（多选）</span></div>
+            <div class="q-title"><span class="q-tag">Q11</span>您对这类产品的看法？<span style="font-size:12px;color:#999">（多选）</span></div>
             <div class="btn-group" id="group_q11">
-                <div class="btn-option" onclick="selectMulti(this)" data-val="愿意付费">愿意为更高品质和健康溢价付费</div>
-                <div class="btn-option" onclick="selectMulti(this)" data-val="价格偏高">感兴趣，但觉得价格偏高</div>
-                <div class="btn-option" onclick="selectMulti(this)" data-val="差别不大">认为与传统品牌差别不大</div>
-                <div class="btn-option" onclick="selectMulti(this)" data-val="不信任">不信任其宣传概念</div>
-                <div class="btn-option" onclick="selectMulti(this)" data-val="其他">其他 <input type="text" class="inline-input" onclick="event.stopPropagation()"></div>
+                <div class="btn-option" onclick="selectMulti(this)" data-val="愿意付费">愿意为品质/健康付费</div>
+                <div class="btn-option" onclick="selectMulti(this)" data-val="价格偏高">感兴趣，但觉得贵</div>
+                <div class="btn-option" onclick="selectMulti(this)" data-val="差别不大">认为差别不大</div>
+                <div class="btn-option" onclick="selectMulti(this)" data-val="不信任">不信任宣传概念</div>
+                <div class="btn-option" onclick="selectMulti(this)" data-val="其他">其他 <input type="text" class="inline-input" onclick="stopProp(event)"></div>
             </div>
         </div>
 
         <!-- Q12 价格 -->
         <div class="card">
-            <div class="q-title"><span class="q-tag">Q12</span>一瓶主流规格(500g)蚝油，能接受的价格区间？</div>
+            <div class="q-title"><span class="q-tag">Q12</span>能接受的价格(500g)？</div>
             <div class="btn-group" id="group_q12">
                 <div class="btn-option" onclick="selectSingle('q12', this)" data-val="15元以下">15元以下</div>
                 <div class="btn-option" onclick="selectSingle('q12', this)" data-val="16-25元">16-25元</div>
@@ -442,32 +415,32 @@
             <input type="hidden" id="input_q12">
         </div>
 
-        <!-- ================= 第4部分 ================= -->
+        <!-- 第4部分 -->
         <div class="section-title">04 / 未来趋势与信息获取</div>
 
         <!-- Q13 趋势 -->
         <div class="card">
-            <div class="q-title"><span class="q-tag">Q13</span>未来选择蚝油更关注哪些方向？<span class="q-note">（最多3项）</span></div>
+            <div class="q-title"><span class="q-tag">Q13</span>未来关注方向？<span style="font-size:12px;color:#999">（最多3项）</span></div>
             <div class="btn-group" id="group_q13">
-                <div class="btn-option" onclick="selectMultiLimit(this, 3)" data-val="功能性">功能性（如零添加、减盐、无麸质）</div>
-                <div class="btn-option" onclick="selectMultiLimit(this, 3)" data-val="高端化">高端化（如更高蚝汁含量、原产地概念）</div>
-                <div class="btn-option" onclick="selectMultiLimit(this, 3)" data-val="便捷性">便捷性（如挤挤包、小包装）</div>
-                <div class="btn-option" onclick="selectMultiLimit(this, 3)" data-val="可持续">可持续（如环保包装）</div>
-                <div class="btn-option" onclick="selectMultiLimit(this, 3)" data-val="口味创新">口味创新（如辣味、蒜香等）</div>
+                <div class="btn-option" onclick="selectMultiLimit(this, 3)" data-val="功能性">功能性(减盐/无麸质)</div>
+                <div class="btn-option" onclick="selectMultiLimit(this, 3)" data-val="高端化">高端化(高蚝汁/原产地)</div>
+                <div class="btn-option" onclick="selectMultiLimit(this, 3)" data-val="便捷性">便捷性(挤挤包/小包装)</div>
+                <div class="btn-option" onclick="selectMultiLimit(this, 3)" data-val="可持续">可持续(环保包装)</div>
+                <div class="btn-option" onclick="selectMultiLimit(this, 3)" data-val="口味创新">口味创新(辣味/蒜香)</div>
             </div>
         </div>
 
         <!-- Q14 渠道 -->
         <div class="card">
-            <div class="q-title"><span class="q-tag">Q14</span>通常通过什么渠道了解新品牌？<span class="q-note">（多选）</span></div>
+            <div class="q-title"><span class="q-tag">Q14</span>了解渠道？<span style="font-size:12px;color:#999">（多选）</span></div>
             <div class="btn-group" id="group_q14">
-                <div class="btn-option" onclick="selectMulti(this)" data-val="电商">电商平台（京东、天猫等）浏览/搜索</div>
-                <div class="btn-option" onclick="selectMulti(this)" data-val="短视频">短视频/直播平台（抖音、快手等）</div>
+                <div class="btn-option" onclick="selectMulti(this)" data-val="电商">电商平台</div>
+                <div class="btn-option" onclick="selectMulti(this)" data-val="短视频">短视频/直播</div>
                 <div class="btn-option" onclick="selectMulti(this)" data-val="亲友">亲友口碑推荐</div>
                 <div class="btn-option" onclick="selectMulti(this)" data-val="线下商超">线下商超陈列</div>
                 <div class="btn-option" onclick="selectMulti(this)" data-val="农贸市场">农贸市场摊</div>
                 <div class="btn-option" onclick="selectMulti(this)" data-val="博主">美食博主/评测推荐</div>
-                <div class="btn-option" onclick="selectMulti(this)" data-val="其他">其他 <input type="text" class="inline-input" onclick="event.stopPropagation()"></div>
+                <div class="btn-option" onclick="selectMulti(this)" data-val="其他">其他 <input type="text" class="inline-input" onclick="stopProp(event)"></div>
             </div>
         </div>
 
@@ -477,24 +450,24 @@
     </form>
 </div>
 
-<!-- 脚本区 -->
+<!-- ================= 脚本区 ================= -->
 <script src="https://cdn.bootcdn.net/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
 <script src="https://unpkg.com/bmob-js-sdk-v4/dist/Bmob-4.0.0.min.js"></script>
 
 <script>
-    // 1. 初始化 Bmob
-    try {
-        Bmob.initialize("70f9577e95b2858b", "1234567890123456"); 
-        console.log("Bmob init success");
-    } catch(e) {
-        console.error("Bmob init failed", e);
+    // 1. 定义交互函数 (确保UI逻辑先加载)
+    
+    function stopProp(e) {
+        if(e && e.stopPropagation) e.stopPropagation();
+        else window.event.cancelBubble = true;
     }
 
-    // 2. 通用交互
     function selectSingle(qId, btn) {
-        var parent = btn.parentNode;
-        var siblings = parent.getElementsByClassName('btn-option');
-        for (var i = 0; i < siblings.length; i++) siblings[i].classList.remove('selected');
+        var group = btn.parentNode;
+        var opts = group.querySelectorAll('.btn-option');
+        for (var i = 0; i < opts.length; i++) {
+            opts[i].classList.remove('selected');
+        }
         btn.classList.add('selected');
         document.getElementById('input_' + qId).value = btn.getAttribute('data-val');
     }
@@ -504,37 +477,38 @@
     }
 
     function selectMultiLimit(btn, limit) {
-        var parent = btn.parentNode;
-        var selectedCount = parent.querySelectorAll('.selected').length;
-        if (!btn.classList.contains('selected') && selectedCount >= limit) {
-            alert('最多选择 ' + limit + ' 项');
+        var group = btn.parentNode;
+        var count = group.querySelectorAll('.selected').length;
+        if (!btn.classList.contains('selected') && count >= limit) {
+            alert('最多选' + limit + '项');
             return;
         }
         btn.classList.toggle('selected');
     }
 
-    // Q3 互斥
     function selectCoastal(btn) {
         var val = btn.getAttribute('data-val');
-        var parent = btn.parentNode;
-        var btns = parent.getElementsByClassName('btn-option');
+        var group = btn.parentNode;
+        var opts = group.querySelectorAll('.btn-option');
+        
         if (val === '都不是') {
-            for(var i=0; i<btns.length; i++) btns[i].classList.remove('selected');
+            for(var i=0; i<opts.length; i++) opts[i].classList.remove('selected');
             btn.classList.add('selected');
         } else {
-            for(var i=0; i<btns.length; i++) {
-                if(btns[i].getAttribute('data-val') === '都不是') btns[i].classList.remove('selected');
+            // 取消“都不是”
+            for(var i=0; i<opts.length; i++) {
+                if(opts[i].getAttribute('data-val') === '都不是') opts[i].classList.remove('selected');
             }
-            var currentSelected = 0;
-            for(var i=0; i<btns.length; i++) if(btns[i].classList.contains('selected')) currentSelected++;
-            if(!btn.classList.contains('selected') && currentSelected >= 2) {
-                alert("至多选择2项"); return;
+            // 限制2个
+            var selCount = 0;
+            for(var i=0; i<opts.length; i++) if(opts[i].classList.contains('selected')) selCount++;
+            if (!btn.classList.contains('selected') && selCount >= 2) {
+                alert('至多选2项'); return;
             }
             btn.classList.toggle('selected');
         }
     }
 
-    // Q4 联动
     function selectFreq(btn) {
         selectSingle('q4', btn);
         var val = btn.getAttribute('data-val');
@@ -543,12 +517,11 @@
             card.classList.remove('hidden');
         } else {
             card.classList.add('hidden');
-            var btns = card.querySelectorAll('.selected');
-            for(var i=0; i<btns.length; i++) btns[i].classList.remove('selected');
+            var opts = card.querySelectorAll('.selected');
+            for(var i=0; i<opts.length; i++) opts[i].classList.remove('selected');
         }
     }
 
-    // Q10 联动
     function selectQ10(btn) {
         selectSingle('q10', btn);
         var val = btn.getAttribute('data-val');
@@ -557,17 +530,17 @@
             card.classList.remove('hidden');
         } else {
             card.classList.add('hidden');
-            var btns = card.querySelectorAll('.selected');
-            for(var i=0; i<btns.length; i++) btns[i].classList.remove('selected');
+            var opts = card.querySelectorAll('.selected');
+            for(var i=0; i<opts.length; i++) opts[i].classList.remove('selected');
         }
     }
 
-    // --- Q5 品牌游戏 ---
+    // 品牌游戏
     var pickedBrands = [null, null, null];
     function addBrand(btn, name) {
         if(btn.classList.contains('disabled')) return;
         var idx = pickedBrands.indexOf(null);
-        if(idx === -1) { alert("只能选择3个，点击上方格子可删除"); return; }
+        if(idx === -1) { alert("只能选3个，点击上方格子可删除"); return; }
         pickedBrands[idx] = name;
         renderBrands();
         if(name === '其他') document.getElementById('q5_manual').classList.remove('hidden');
@@ -588,92 +561,87 @@
                 el.classList.add('filled');
                 el.innerHTML = pickedBrands[i] + ' <span style="font-size:10px">×</span>';
             } else {
-                el.innerText = ["第一提及","第二提及","第三提及"][i];
+                el.innerText = ["第一","第二","第三"][i];
                 el.classList.remove('filled');
             }
         }
     }
 
-    // --- Q8 排序 (新增按钮调整功能) ---
-    var sortList = document.getElementById('sortList');
-    
-    // 按钮上移
+    // 排序逻辑 (箭头移动)
     function moveUp(btn) {
-        // 阻止冒泡，防止触发拖拽或其他
-        event.stopPropagation();
-        var item = btn.closest('.sort-item');
+        stopProp(window.event);
+        var item = btn.parentNode.parentNode;
         var prev = item.previousElementSibling;
         if(prev) {
             item.parentNode.insertBefore(item, prev);
-            updateSortNumbers();
+            updateSortNum();
         }
     }
-    
-    // 按钮下移
     function moveDown(btn) {
-        event.stopPropagation();
-        var item = btn.closest('.sort-item');
+        stopProp(window.event);
+        var item = btn.parentNode.parentNode;
         var next = item.nextElementSibling;
         if(next) {
             item.parentNode.insertBefore(next, item);
-            updateSortNumbers();
+            updateSortNum();
         }
     }
-
-    // 更新序号函数
-    function updateSortNumbers() {
-        var items = sortList.getElementsByClassName('sort-num');
-        for(var i=0; i<items.length; i++) {
-            items[i].innerText = (i+1);
-        }
+    function updateSortNum() {
+        var items = document.querySelectorAll('.sort-num');
+        for(var i=0; i<items.length; i++) items[i].innerText = (i+1);
     }
 
-    // 拖拽初始化
-    if(typeof Sortable !== 'undefined') {
-        new Sortable(sortList, {
-            animation: 150, handle: '.sort-handle',
-            onEnd: updateSortNumbers // 拖拽结束也更新序号
-        });
+    // 2. 初始化 Bmob (放在 try-catch 中，不影响 UI)
+    try {
+        Bmob.initialize("70f9577e95b2858b", "1234567890123456"); 
+        console.log("Bmob init ok");
+    } catch(e) {
+        console.error("Bmob fail", e);
     }
-
-    // --- 提交 ---
-    function getMultiVals(groupId) {
-        var btns = document.querySelectorAll('#' + groupId + ' .selected');
-        var vals = [];
-        for(var i=0; i<btns.length; i++) {
-            var val = btns[i].getAttribute('data-val');
-            var input = btns[i].querySelector('input');
-            if(input && input.value) val += ":" + input.value;
-            vals.push(val);
+    
+    // 3. 尝试加载 Sortable，失败也没关系
+    try {
+        var el = document.getElementById('sortList');
+        if(typeof Sortable !== 'undefined') {
+            new Sortable(el, { animation: 150, handle: '.sort-handle', onEnd: updateSortNum });
         }
-        return vals;
+    } catch(e) {}
+
+    // 4. 提交数据
+    function getMultiVals(gid) {
+        var opts = document.querySelectorAll('#'+gid+' .selected');
+        var arr = [];
+        for(var i=0; i<opts.length; i++) {
+            var v = opts[i].getAttribute('data-val');
+            var inp = opts[i].querySelector('input');
+            if(inp && inp.value) v += ":" + inp.value;
+            arr.push(v);
+        }
+        return arr;
     }
 
     function submitData() {
         var btn = document.getElementById('btnSubmit');
 
-        // 数据收集
         var q1 = document.getElementById('input_q1').value;
         var q2 = document.getElementById('input_q2').value;
         var q3 = getMultiVals('group_q3');
         var q4 = document.getElementById('input_q4').value;
         var q4_2 = getMultiVals('group_q4_2');
         
-        var q5_arr = pickedBrands.filter(function(v){ return v!=null; });
+        var q5_arr = pickedBrands.filter(function(v){return v!=null});
         var q5 = q5_arr.join(',');
-        if(pickedBrands.includes('其他')) q5 += "(" + document.getElementById('q5_manual').value + ")";
+        if(pickedBrands.includes('其他')) q5 += "("+document.getElementById('q5_manual').value+")";
 
         var q6 = document.getElementById('input_q6').value;
-        var q6_other = document.getElementById('q6_other').value;
-        if(q6 === '其他' && q6_other) q6 += ":" + q6_other;
+        if(q6 === '其他') q6 += ":" + document.getElementById('q6_other').value;
 
         var q7 = getMultiVals('group_q7');
         
-        // 获取排序结果
         var q8 = [];
-        var sortItems = document.querySelectorAll('.sort-item');
-        for(var i=0; i<sortItems.length; i++) q8.push(sortItems[i].getAttribute('data-id'));
-        
+        var sItems = document.querySelectorAll('.sort-item');
+        for(var i=0; i<sItems.length; i++) q8.push(sItems[i].getAttribute('data-id'));
+
         var q9 = document.getElementById('input_q9').value;
         var q10 = document.getElementById('input_q10').value;
         var q11 = getMultiVals('group_q11');
@@ -681,12 +649,11 @@
         var q13 = getMultiVals('group_q13');
         var q14 = getMultiVals('group_q14');
 
-        // 校验
         if(!q1 || !q2 || q3.length===0 || !q4) { alert("请填写基础信息(Q1-Q4)"); return; }
-        if(q5_arr.length === 0) { alert("请选择品牌印象(Q5)"); return; }
-        if(!q6) { alert("请选择最近购买品牌(Q6)"); return; }
-        if(!q9) { alert("请选择新型蚝油偏好(Q9)"); return; }
-        if(!q10) { alert("请填写认知情况(Q10)"); return; }
+        if(q5_arr.length===0) { alert("请选择品牌印象(Q5)"); return; }
+        if(!q6) { alert("请选择最近购买(Q6)"); return; }
+        if(!q9) { alert("请选择新型蚝油(Q9)"); return; }
+        if(!q10) { alert("请填写认知(Q10)"); return; }
 
         btn.innerText = "提交中...";
         btn.disabled = true;
@@ -709,13 +676,13 @@
         query.set("q14_channel", q14);
 
         query.save().then(function(res){
-            alert("✅ 提交成功！感谢您的配合。");
+            alert("✅ 提交成功！");
             btn.innerText = "已完成";
         }).catch(function(err){
             alert("❌ 提交失败，请重试");
             console.log(err);
             btn.disabled = false;
-            btn.innerText = "重新提交";
+            btn.innerText = "重试";
         });
     }
 </script>
